@@ -12,7 +12,7 @@ mario:: Auto
 mario = UnAuto "Rojo" 300 10000
 
 yoshi:: Auto
-yoshi = UnAuto "verde" 200 5000
+yoshi = UnAuto "verde" 200 9999
 
 princesaPeach:: Auto 
 princesaPeach = UnAuto "Rosa" 150 6000
@@ -46,4 +46,23 @@ alterarLaVelocidad :: Auto -> (Int -> Int) -> Auto
 alterarLaVelocidad unAuto unModificador = unAuto {velocidad = unModificador (velocidad unAuto)}
 
 bajarVelocidad :: Auto -> Int -> Auto
-bajarVelocidad unAuto ciertaVelocidad = unAuto {velocidad = max (velocidad unAuto - ciertaVelocidad) 0}
+bajarVelocidad unAuto ciertaVelocidad = unAuto { velocidad = max (velocidad (alterarLaVelocidad unAuto (flip (-) ciertaVelocidad))) 0 }
+
+afectarALosQueCumplen :: (Auto -> Bool) -> (Auto -> Auto) -> Carrera -> Carrera
+afectarALosQueCumplen criterio efecto lista = (map efecto . filter criterio) lista ++ filter (not.criterio) lista
+
+terremoto :: Auto -> Carrera -> Carrera
+terremoto unAuto unaCarrera = afectarALosQueCumplen (estaCerca unAuto) (`bajarVelocidad`50) unaCarrera
+
+estaDetrasDeUnAuto :: Auto -> Carrera -> Auto -> Bool
+estaDetrasDeUnAuto unAuto unaCarrera otroAuto = puestoEnLaCarrera otroAuto unaCarrera < puestoEnLaCarrera unAuto unaCarrera
+
+miguelito :: Auto -> Int -> Carrera -> Carrera
+miguelito unAuto unValor unaCarrera = afectarALosQueCumplen (estaDetrasDeUnAuto unAuto unaCarrera) (`bajarVelocidad`unValor) unaCarrera
+-- MIGUELITO NO ANDA TAN BIEN COMO DEBERIA (el puto de miguelito)
+
+jetPack :: Auto -> Int -> Auto
+jetPack unAuto unTiempo = unAuto {distancia = distancia (queCorraUnAuto (alterarLaVelocidad unAuto (*2)) unTiempo)}
+
+
+

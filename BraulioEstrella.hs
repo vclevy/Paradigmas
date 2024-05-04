@@ -1,68 +1,67 @@
 import Text.Show.Functions
+--git add . se pone lindo para la foto,git commit -m "Nombre expresivo del commit" saco la foto
+-- git add git commit git push origin HEAD
+data Personaje = UnPersonaje{
+    nombre :: String,
+    poderBasico :: PoderBasico,
+    superPoder :: SuperPoder,
+    superPoderActivo :: Bool,
+    cantidadDeVida :: Int
+} deriving Show
 
-data Auto = UnAuto {
-    color :: String,
-    velocidad :: Int,
-    distancia :: Int
-} deriving (Show, Eq)
+type PoderBasico = Personaje -> Personaje
+type SuperPoder = Personaje -> Personaje
 
-type Carrera = [Auto]
+--bolaEspinosa :: PoderBasico 
+--bolaEspinosa unPersonaje = cantidadDeVida unPersonaje - 1000 ESTÁ MAL, PORQ NO DEVUELVE UN PERSONAJE
 
-mario:: Auto
-mario = UnAuto "Rojo" 300 10000
+espina :: Personaje
+espina = UnPersonaje "Espina" bolaEspinosa  (granadaDeEspinas 5) True 4800
 
-yoshi:: Auto
-yoshi = UnAuto "verde" 200 9999
+bolaEspinosa :: PoderBasico 
+bolaEspinosa unPersonaje = unPersonaje {cantidadDeVida = max (cantidadDeVida unPersonaje - 1000) 0}
 
-princesaPeach:: Auto 
-princesaPeach = UnAuto "Rosa" 150 6000
+-- cota minima max, cota maxima min
 
-copaPiston :: Carrera
-copaPiston = [mario, yoshi, princesaPeach]
+lluviaDeTuercas :: String -> PoderBasico
+-- tmb puede ser lluviaDeTuercas :: String -> Personaje -> Personaje
+lluviaDeTuercas tipoDeTuerca unPersonaje
+    |tipoDeTuerca == "Sanadora" = unPersonaje {cantidadDeVida= cantidadDeVida unPersonaje + 800}
+    |tipoDeTuerca == "Dañina" = unPersonaje {cantidadDeVida= cantidadDeVida unPersonaje `div` 2}
+    |otherwise = unPersonaje
 
-estaCerca :: Auto -> Auto -> Bool
-estaCerca unAuto otroAuto = unAuto /= otroAuto && ((<10).distanciaEntreAutos unAuto) otroAuto
+-- OTRA FORMA lluviaDeTuercas :: String -> PoderBasico
+-- lluviaDeTuercas "Sanadora" unPersonaje = unPersonaje {cantidadDeVida= modificarVida (+800) unPersonaje}
+-- lluviaDeTuercas "Dañina" unPersonaje = unPersonaje {cantidadDeVida= cantidadDeVida unPersonaje `div` 2}
+-- lluviaDeTuercas _ unPersonaje = unPersonaje ES PREFERIBLE USAR ESTO ANTES Q LAS GUARDAS!
 
-distanciaEntreAutos :: Auto -> Auto -> Int
-distanciaEntreAutos unAuto otroAuto = abs (distancia otroAuto - distancia unAuto)
+pamela :: Personaje
+pamela = UnPersonaje "Pamela" (lluviaDeTuercas "Sanadora") torretaCurativa False 9600
 
-vaTranquilo :: Auto -> Carrera -> Bool
-vaTranquilo unAuto unaCarrera = all (not.estaCerca unAuto) unaCarrera && maximum (map distancia unaCarrera) == distancia unAuto
+modificarVida :: (Int->Int) -> Personaje -> Personaje
+modificarVida unaFuncion unPersonaje = unPersonaje {cantidadDeVida = unaFuncion (cantidadDeVida unPersonaje)}
+-- lluviaDeTuercas "Sanadora" unPersonaje = modificarVida (+800) unPersonaje
 
-{- autosPorDelante :: Auto -> Auto -> Bool
-autosPorDelante unAuto otroAuto = distancia otroAuto > distancia unAuto
-listaDeCantidadDeAutosPorDelante :: Auto -> Carrera -> [Auto]
-listaDeCantidadDeAutosPorDelante unAuto unaCarrera = filter (autosPorDelante unAuto) unaCarrera 
-puestoEnLaCarrera :: Auto -> Carrera -> Int
-puestoEnLaCarrera unAuto unaCarrera = length (listaDeCantidadDeAutosPorDelante unAuto unaCarrera) +1 -}
+granadaDeEspinas:: Int -> SuperPoder
+granadaDeEspinas radioDeExplosion unPersonaje 
+    | radioDeExplosion>3 && cantidadDeVida unPersonaje < 800 = 
+  unPersonaje {nombre = nombre unPersonaje ++ " Espina Estuvo Aqui", cantidadDeVida = 0, superPoderActivo = False}
+    | radioDeExplosion>3 = unPersonaje {nombre = nombre unPersonaje ++ " Espina Estuvo Aqui"}
+    | otherwise = bolaEspinosa unPersonaje 
 
-puestoEnLaCarrera :: Auto -> Carrera -> Int
-puestoEnLaCarrera unAuto unaCarrera = length (filter (>distancia unAuto) (map distancia unaCarrera)) +1
+torretaCurativa:: SuperPoder
+torretaCurativa unPersonaje = unPersonaje {superPoderActivo = True, cantidadDeVida = (cantidadDeVida unPersonaje) *2}
 
-queCorraUnAuto :: Auto -> Int -> Auto
-queCorraUnAuto unAuto tiempo = unAuto {distancia = distancia unAuto + (tiempo * velocidad unAuto)}
+atacarConElPoderEspecial :: Personaje -> Personaje
+atacarConElPoderEspecial unPersonaje
+    | superPoderActivo unPersonaje = ataqueSuperYBasico unPersonaje
+    | otherwise = unPersonaje
 
-alterarLaVelocidad :: Auto -> (Int -> Int) -> Auto
-alterarLaVelocidad unAuto unModificador = unAuto {velocidad = unModificador (velocidad unAuto)}
+ataqueSuperYBasico :: Personaje -> Personaje
+ataqueSuperYBasico unPersonaje = (poderBasico unPersonaje.superPoder unPersonaje) unPersonaje
 
-bajarVelocidad :: Auto -> Int -> Auto
-bajarVelocidad unAuto ciertaVelocidad = unAuto { velocidad = max (velocidad (alterarLaVelocidad unAuto (flip (-) ciertaVelocidad))) 0 }
+quienesEstanEnLasUltimas :: [Personaje] -> [Personaje]
+quienesEstanEnLasUltimas listaDePersonajes = filter esMenorA800 listaDePersonajes
 
-afectarALosQueCumplen :: (Auto -> Bool) -> (Auto -> Auto) -> Carrera -> Carrera
-afectarALosQueCumplen criterio efecto lista = (map efecto . filter criterio) lista ++ filter (not.criterio) lista
-
-terremoto :: Auto -> Carrera -> Carrera
-terremoto unAuto unaCarrera = afectarALosQueCumplen (estaCerca unAuto) (`bajarVelocidad`50) unaCarrera
-
-estaDetrasDeUnAuto :: Auto -> Carrera -> Auto -> Bool
-estaDetrasDeUnAuto unAuto unaCarrera otroAuto = puestoEnLaCarrera otroAuto unaCarrera < puestoEnLaCarrera unAuto unaCarrera
-
-miguelito :: Auto -> Int -> Carrera -> Carrera
-miguelito unAuto unValor unaCarrera = afectarALosQueCumplen (estaDetrasDeUnAuto unAuto unaCarrera) (`bajarVelocidad`unValor) unaCarrera
--- MIGUELITO NO ANDA TAN BIEN COMO DEBERIA (el puto de miguelito)
-
-jetPack :: Auto -> Int -> Auto
-jetPack unAuto unTiempo = unAuto {distancia = distancia (queCorraUnAuto (alterarLaVelocidad unAuto (*2)) unTiempo)}
-
-
-
+esMenorA800 :: Personaje -> Bool
+esMenorDe800 unPersonaje = cantidadDeVida unPersonaje < 800
