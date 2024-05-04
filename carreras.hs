@@ -46,7 +46,4 @@ alterarLaVelocidad :: Auto -> (Int -> Int) -> Auto
 alterarLaVelocidad unAuto unModificador = unAuto {velocidad = unModificador (velocidad unAuto)}
 
 bajarVelocidad :: Auto -> Int -> Auto
-bajarVelocidad unAuto ciertaVelocidad = unAuto {velocidad = alterarLaVelocidad unAuto (restar ciertaVelocidad)}
-
-restar :: Int -> Int -> Int
-restar x y = x - y
+bajarVelocidad unAuto ciertaVelocidad = unAuto {velocidad = max (velocidad unAuto - ciertaVelocidad) 0}
