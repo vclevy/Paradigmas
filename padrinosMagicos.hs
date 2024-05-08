@@ -9,8 +9,8 @@ data Chico = Chico {
 aprenderHabilidades :: Chico -> String -> Chico
 aprenderHabilidades unChico habilidad = unChico{habilidades = habilidad : habilidades unChico}
 
-serGrosoEnNeedForSpeed :: Chico -> a -> Chico
-serGrosoEnNeedForSpeed unChico need4speed = foldl aprenderHabilidades unChico need4speed
+serGrosoEnNeedForSpeed :: Chico -> [String] -> Chico
+serGrosoEnNeedForSpeed = foldl aprenderHabilidades
 
 serMayor :: Chico -> Chico
 serMayor unChico = modificarEdad unChico (*(18/edad unChico))
