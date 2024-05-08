@@ -10,7 +10,7 @@ aprenderHabilidades :: Chico -> String -> Chico
 aprenderHabilidades unChico habilidad = unChico{habilidades = habilidad : habilidades unChico}
 
 serGrosoEnNeedForSpeed :: Chico -> String -> String -> String -> Chico
-serGrosoEnNeedForSpeed unChico n1 n2 n3= (aprenderHabilidades n3.aprenderHabilidades n2.aprenderHabilidades n1) unChico
+serGrosoEnNeedForSpeed unChico n1 n2 n3 = foldl aprenderHabilidades unChico [n1,n2,n3]
 
 serMayor :: Chico -> Chico
 serMayor unChico = unChico{edad = 18}
