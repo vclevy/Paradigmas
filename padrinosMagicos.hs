@@ -6,8 +6,8 @@ data Chico = Chico {
     deseos :: [String]
 }deriving (Show,Eq)
 
-aprenderHabilidades :: String -> Chico -> Chico
-aprenderHabilidades habilidad unChico = unChico{habilidades = habilidad : habilidades unChico}
+aprenderHabilidades :: Chico -> String -> Chico
+aprenderHabilidades unChico habilidad = unChico{habilidades = habilidad : habilidades unChico}
 
 serGrosoEnNeedForSpeed :: Chico -> String -> String -> String -> Chico
 serGrosoEnNeedForSpeed unChico n1 n2 n3= (aprenderHabilidades n3.aprenderHabilidades n2.aprenderHabilidades n1) unChico
@@ -22,4 +22,4 @@ cosmo :: Chico -> Chico                         --HAY LOGICA REPETIDA! APLICAR H
 cosmo unChico = unChico{edad = edad unChico/2}
 
 muffinMagico :: Chico -> Chico
-muffinMagico = undefined
+muffinMagico unChico = foldl aprenderHabilidades unChico (deseos unChico)
