@@ -13,13 +13,16 @@ serGrosoEnNeedForSpeed :: Chico -> String -> String -> String -> Chico
 serGrosoEnNeedForSpeed unChico n1 n2 n3 = foldl aprenderHabilidades unChico [n1,n2,n3]
 
 serMayor :: Chico -> Chico
-serMayor unChico = unChico{edad = 18}
+serMayor unChico = modificarEdad unChico (*(18/edad unChico))
 
 wanda :: Chico -> Chico
-wanda unChico = unChico{edad = edad unChico + 1, deseos = init (deseos unChico)}
+wanda unChico = (modificarEdad unChico (+1)) {deseos = init (deseos unChico)}
 
-cosmo :: Chico -> Chico                         --HAY LOGICA REPETIDA! APLICAR HIGH ORDER
-cosmo unChico = unChico{edad = edad unChico/2}
+cosmo :: Chico -> Chico                     
+cosmo unChico = modificarEdad unChico (/2)
+
+modificarEdad :: Chico -> (Float->Float) -> Chico
+modificarEdad unChico modificador = unChico{edad = modificador (edad unChico)}
 
 muffinMagico :: Chico -> Chico
 muffinMagico unChico = foldl aprenderHabilidades unChico (deseos unChico)
