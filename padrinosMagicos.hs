@@ -34,18 +34,20 @@ tieneHabilidad unaHabilidad unChico = unaHabilidad `elem` habilidades unChico
 esSuperMaduro :: String -> Chico -> Bool
 esSuperMaduro unaHabilidad unChico = edad unChico >= 18 && tieneHabilidad unaHabilidad unChico
 
--- para Trixie la única condición es que el chico no sea Timmy,
-
---ya que nunca saldría con él
---trixie = Chica “Trixie Tang” noEsTimmy
---vicky = Chica “Vicky” (tieneHabilidad “ser un supermodelo noruego”)
 data Chica = Chica {
     nombreChica :: String,
-    condicionChica :: Bool
+    condicionChica :: Chico -> Bool
 }
+trixie :: Chica
+trixie = Chica "Trixie Tang" noEsTimmy
+vicky :: Chica
+vicky = Chica "Vicky" (tieneHabilidad "ser un supermodelo noruego")
+
 
 noEsTimmy :: Chico -> Bool
 noEsTimmy unChico = nombre unChico /= "Timmy"
 
-quienConquistaA :: Chica -> [String] -> [String]
-quienConquistaA = undefined
+quienConquistaA :: Chica -> [Chico] -> Chico
+quienConquistaA unaChica pretendientes
+    | (not.any (condicionChica unaChica)) pretendientes = last pretendientes
+    | otherwise = (last.filter (condicionChica unaChica)) pretendientes
