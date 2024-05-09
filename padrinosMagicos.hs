@@ -51,3 +51,16 @@ quienConquistaA :: Chica -> [Chico] -> Chico
 quienConquistaA unaChica pretendientes
     | (not.any (condicionChica unaChica)) pretendientes = last pretendientes
     | otherwise = (last.filter (condicionChica unaChica)) pretendientes
+
+tootie :: Chica
+tootie = Chica "Vicky's little sister" (tieneHabilidad "sabe cocinar")
+
+-- PARTE C
+habilidadesProhibidas :: [String]
+habilidadesProhibidas = ["enamorar", "matar" , "dominar el mundo"]
+
+tomaPrimeras5habilidades :: [String] -> [String]
+tomaPrimeras5habilidades = take 5 
+
+infractoresDeDaRules :: Chico -> [String]
+infractoresDeDaRules unChico = tomaPrimeras5habilidades(filter )
