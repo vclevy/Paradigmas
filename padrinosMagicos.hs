@@ -41,12 +41,11 @@ esSuperMaduro unaHabilidad unChico = edad unChico >= 18 && tieneHabilidad unaHab
 --vicky = Chica “Vicky” (tieneHabilidad “ser un supermodelo noruego”)
 data Chica = Chica {
     nombreChica :: String,
-    condicionChica :: String->Chico->Bool
+    condicionChica :: Bool
 }
 
-noEsTimmy :: String -> Chico -> Bool
-noEsTimmy "Timmy" _ = False
-noEsTimmy _ _ = True
+noEsTimmy :: Chico -> Bool
+noEsTimmy unChico = nombre unChico /= "Timmy"
 
 quienConquistaA :: Chica -> [String] -> [String]
 quienConquistaA = undefined
