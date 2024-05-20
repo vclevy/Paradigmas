@@ -1,10 +1,8 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Move filter" #-}
-{-# HLINT ignore "Eta reduce" #-}
-{-# HLINT ignore "Use infix" #-}
+{-# OPTIONS_GHC -Wno-missing-fields #-}
 import Data.Char (toUpper,isUpper)
 import Text.Show.Functions
 import Data.List (intersect)
+
 
 data Barbaro = Barbaro{
     nombre :: String,
@@ -35,9 +33,8 @@ cuerda :: Objetos -> Objetos -> Objetos
 cuerda unObjeto otroObjeto = unObjeto.otroObjeto
 
 --PUNTO 2
-
 megafono :: Objetos
-megafono = undefined
+megafono unBarbaro = Barbaro {habilidades = [concatMap (map toUpper) (habilidades unBarbaro)]}
 
 megafonoBarbarico :: Objetos
 megafonoBarbarico = cuerda megafono ardilla
@@ -83,12 +80,21 @@ aventuraTodoPoderoso :: [Evento]
 aventuraTodoPoderoso = [ritualDeFechorias]
 
 sobrevivientes :: Aventura -> [Barbaro] -> [Barbaro]
-sobrevivientes unaAventura unGrupo = filter (sobreviveAventura unaAventura) unGrupo
+sobrevivientes unaAventura  = filter (sobreviveAventura unaAventura) 
 
 sobreviveAventura :: Aventura -> Barbaro -> Bool
 sobreviveAventura aventura barbaro = all (\evento -> evento barbaro) aventura
 
 --PUNTO 4
 
-sinRepetidos :: [String] -> [String]
-sinRepetidos lista = intersect lista lista 
+sinRepetidos :: Eq a => [a] -> [a]
+sinRepetidos [] = []
+sinRepetidos (x:xs)
+    | x `elem` xs = sinRepetidos xs
+    | otherwise   = x : sinRepetidos xs
+
+asteriscosInfinitos :: [String]
+asteriscosInfinitos = map (`replicate` '*') [1..]
+
+descendientes :: Barbaro -> [Barbaro]
+descendientes = undefined
