@@ -2,6 +2,7 @@
 import Data.Char (toUpper,isUpper)
 import Text.Show.Functions
 import Data.List (intersect)
+import Distribution.Types.LocalBuildInfo (unitIdTarget')
 
 
 data Barbaro = Barbaro{
@@ -34,7 +35,7 @@ cuerda unObjeto otroObjeto = unObjeto.otroObjeto
 
 --PUNTO 2
 megafono :: Objetos
-megafono unBarbaro = Barbaro {habilidades = [concatMap (map toUpper) (habilidades unBarbaro)]}
+megafono unBarbaro = unBarbaro { habilidades = [map toUpper (concat (habilidades unBarbaro))] }
 
 megafonoBarbarico :: Objetos
 megafonoBarbarico = cuerda megafono ardilla
@@ -98,3 +99,4 @@ asteriscosInfinitos = map (`replicate` '*') [1..]
 
 descendientes :: Barbaro -> [Barbaro]
 descendientes = undefined
+
