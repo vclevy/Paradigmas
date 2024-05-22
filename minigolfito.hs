@@ -47,8 +47,8 @@ type Palo = Jugador -> Tiro
 putter :: Palo
 putter unJugador = UnTiro{velocidad = 10, precision = 2* precisionJugador (habilidad unJugador), altura = 0 }
 
---madera :: Palo  
---madera unJugador = UnTiro{velocidad = 100 ,precision = 0.5*precisionJugador (habilidad unJugador),altura =5}
+madera :: Palo  
+madera unJugador = UnTiro{velocidad = 100 ,precision = 0.5*precisionJugador (habilidad unJugador),altura =5}
 
 hierros :: Int-> Palo
 hierros n unJugador = UnTiro{velocidad = n* fuerzaJugador (habilidad unJugador), precision = precisionJugador (habilidad unJugador)/n, altura=menorA3minimo0 n}
@@ -56,10 +56,10 @@ hierros n unJugador = UnTiro{velocidad = n* fuerzaJugador (habilidad unJugador),
 menorA3minimo0 :: Int->Int
 menorA3minimo0 n 
     | n-3<0 = 0
-    | otherwise 
+    | otherwise = n-3
 
---palos :: [Palo]
---palos = [putter] ++ [madera] ++ map hierros [1..10]
+palos :: [Palo]
+palos = [putter] ++ [madera] ++ map hierros [1..10]
 
 golpes :: Jugador -> Palo -> Tiro
 golpes unJugador unPalo = unPalo unJugador
