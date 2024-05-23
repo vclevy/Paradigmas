@@ -1,2 +1,2 @@
 # Paradigmas
-Subo resoluciones propias de tps y parciales
+tps y parciales
