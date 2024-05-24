@@ -1,17 +1,18 @@
+import Text.Show.Functions
 
 data Chico = Chico {
     nombre :: String,
     edad :: Float,
     habilidades :: [String],
-    deseos :: [Chico -> Chico] --me hace ruido este tipo de dato!!
+    deseos :: [Chico -> Chico]
 }
 
 -- PARTE A
 aprenderHabilidades :: Chico -> String -> Chico
 aprenderHabilidades unChico habilidad = unChico{habilidades = habilidad : habilidades unChico}
 
-serGrosoEnNeedForSpeed :: Chico -> [String] -> Chico
-serGrosoEnNeedForSpeed = foldl aprenderHabilidades
+serGrosoEnNeedForSpeed :: [String] -> Chico -> Chico
+serGrosoEnNeedForSpeed unaString unChico = foldl aprenderHabilidades unChico unaString
 
 serMayor :: Chico -> Chico
 serMayor unChico = modificarEdad (*(18/edad unChico)) unChico
@@ -65,8 +66,39 @@ tootie = Chica "Vicky's little sister" (tieneHabilidad "sabe cocinar")
 habilidadesProhibidas :: [String]
 habilidadesProhibidas = ["enamorar", "matar" , "dominar el mundo"]
 
-tomaPrimeras5habilidades :: [String] -> [String]
-tomaPrimeras5habilidades = take 5 
+tomaCinco :: Chico -> Chico
+tomaCinco unChico = unChico{habilidades = take 5 (habilidades unChico)}
 
-infractoresDeDaRules :: Chico -> [String]
-infractoresDeDaRules = undefined
+tieneAlgunaDeLasProhibidas :: Chico -> Bool
+tieneAlgunaDeLasProhibidas unChico = (tieneHabilidad "enamorar".tomaCinco) unChico ||(tieneHabilidad "matar".tomaCinco) unChico ||(tieneHabilidad "Dominar el mundo".tomaCinco) unChico
+
+todosLosDeseos :: [Chico] -> [Chico]
+todosLosDeseos  =  map muffinMagico 
+
+infractoresDeDaRules :: [Chico] -> [String]
+infractoresDeDaRules losChicos = map nombre (filter tieneAlgunaDeLasProhibidas (todosLosDeseos losChicos))
+
+{-Ejemplos-}
+
+timmy :: Chico
+timmy = Chico {
+    nombre = "Timmy",
+    edad = 15.5,
+    habilidades = ["Programación", "Fútbol","matar"],
+    deseos = [serMayor]
+}
+
+chico2 :: Chico
+chico2 = Chico {
+    nombre = "Maria",
+    edad = 17,
+    habilidades = ["Cocina", "Baile"],
+    deseos = [serMayor, serGrosoEnNeedForSpeed ["Conducción"]]
+}
+
+chico3 :: Chico
+chico3 = Chico {
+    nombre = "Carlos",
+    habilidades = ["Lectura", "Pintura"],
+    deseos = [cumlpirPrimerDeseo, muffinMagico, serGrosoEnNeedForSpeed ["needForSpeed2"]]
+}
