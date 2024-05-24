@@ -14,19 +14,21 @@ serGrosoEnNeedForSpeed :: Chico -> [String] -> Chico
 serGrosoEnNeedForSpeed = foldl aprenderHabilidades
 
 serMayor :: Chico -> Chico
-serMayor unChico = modificarEdad unChico (*(18/edad unChico))
+serMayor unChico = modificarEdad (*(18/edad unChico)) unChico
 
 cumplirDeseo :: Chico -> (Chico -> Chico) -> Chico
 cumplirDeseo unChico unDeseo = unDeseo unChico
 
 wanda :: Chico -> Chico
-wanda unChico = (((`cumplirDeseo`head(deseos unChico)).(`modificarEdad`(+1)))unChico) {deseos = init (deseos unChico)}
+wanda unChico = ((cumlpirPrimerDeseo.modificarEdad(+1))unChico) {deseos = init (deseos unChico)}
+cumlpirPrimerDeseo :: Chico -> Chico
+cumlpirPrimerDeseo unChico = cumplirDeseo unChico (head(deseos unChico))
 
 cosmo :: Chico -> Chico
-cosmo unChico = modificarEdad unChico (/2)
+cosmo = modificarEdad (/2) 
 
-modificarEdad :: Chico -> (Float->Float) -> Chico
-modificarEdad unChico modificador = unChico{edad = modificador (edad unChico)}
+modificarEdad :: (Float -> Float) -> Chico -> Chico
+modificarEdad modificador unChico = unChico {edad = modificador (edad unChico)}
 
 muffinMagico :: Chico -> Chico
 muffinMagico unChico = foldl cumplirDeseo unChico (deseos unChico)
@@ -67,4 +69,4 @@ tomaPrimeras5habilidades :: [String] -> [String]
 tomaPrimeras5habilidades = take 5 
 
 infractoresDeDaRules :: Chico -> [String]
-infractoresDeDaRules unChico = tomaPrimeras5habilidades(filter )
+infractoresDeDaRules = undefined
