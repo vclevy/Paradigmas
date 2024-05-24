@@ -3,8 +3,9 @@ data Chico = Chico {
     nombre :: String,
     edad :: Float,
     habilidades :: [String],
-    deseos :: [String] --me hace ruido este tipo de dato!!
-}deriving (Show,Eq)
+    deseos :: [Chico -> Chico] --me hace ruido este tipo de dato!!
+}
+
 -- PARTE A
 aprenderHabilidades :: Chico -> String -> Chico
 aprenderHabilidades unChico habilidad = unChico{habilidades = habilidad : habilidades unChico}
@@ -15,8 +16,11 @@ serGrosoEnNeedForSpeed = foldl aprenderHabilidades
 serMayor :: Chico -> Chico
 serMayor unChico = modificarEdad unChico (*(18/edad unChico))
 
+cumplirDeseo :: Chico -> (Chico -> Chico) -> Chico
+cumplirDeseo unChico unDeseo = unDeseo unChico
+
 wanda :: Chico -> Chico
-wanda unChico = (modificarEdad unChico (+1)) {deseos = init (deseos unChico)}
+wanda unChico = (((`cumplirDeseo`head(deseos unChico)).(`modificarEdad`(+1)))unChico) {deseos = init (deseos unChico)}
 
 cosmo :: Chico -> Chico
 cosmo unChico = modificarEdad unChico (/2)
@@ -25,7 +29,7 @@ modificarEdad :: Chico -> (Float->Float) -> Chico
 modificarEdad unChico modificador = unChico{edad = modificador (edad unChico)}
 
 muffinMagico :: Chico -> Chico
-muffinMagico unChico = foldl aprenderHabilidades unChico (deseos unChico)
+muffinMagico unChico = foldl cumplirDeseo unChico (deseos unChico)
 
 -- PARTE B
 tieneHabilidad :: String -> Chico -> Bool
