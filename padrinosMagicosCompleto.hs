@@ -33,7 +33,7 @@ cumplirPrimerDeseo :: Chico -> Chico
 cumplirPrimerDeseo unChico = (head (deseos unChico)) unChico
 
 cosmo :: Padrino
-cosmo unChico = modificarEdad (div 2) unChico
+cosmo = modificarEdad (div 2)
 
 muffinMagico :: Padrino
 muffinMagico unChico = foldr ($) unChico (deseos unChico)
