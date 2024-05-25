@@ -1,119 +1,122 @@
 import Text.Show.Functions
 
-data Ninja = Ninja{
+data Ninja = UnNinja {
     nombre :: String,
     herramientas :: [Herramienta],
     jutsus :: [Jutsu],
     rango :: Int
-}deriving(Show)
+} deriving (Show)
 
 type Jutsu = Mision -> Mision
+type Herramienta = (String, Cantidad)
+type Cantidad = Int
 
-elrango::Int->Int
-elrango = max 0
+--accesores a la tupla Herramienta
+nombreHerramienta :: Herramienta -> String
+nombreHerramienta (nombre, _) = nombre
+cantidadHerramienta :: Herramienta -> Int
+cantidadHerramienta (_, cantidad) = cantidad
 
-data Herramienta = Herramienta{
-    nombreHerramienta :: String,
-    cantDisponible :: Int
-}deriving(Show,Eq)
+modificarHerramientas :: ([Herramienta]->[Herramienta]) -> Ninja -> Ninja
+modificarHerramientas unaFuncion unNinja = unNinja {herramientas= unaFuncion.herramientas $ unNinja}
 
-cantidadHerramientas :: Ninja -> Int
-cantidadHerramientas unNinja = sum (map cantDisponible (herramientas unNinja))
+obtenerHerramienta :: Herramienta -> Ninja -> Ninja
+obtenerHerramienta unaHerramienta unNinja
+ | sumaDeHerramientas unNinja + cantidadHerramienta unaHerramienta <=100 = modificarHerramientas (++ [unaHerramienta]) unNinja
+ | otherwise = modificarHerramientas (++ [herramientaSinExcederse unaHerramienta unNinja]) unNinja
 
-totalAdquirido :: Ninja -> Int -> Int
-totalAdquirido unNinja cantidad = min (cantidadHerramientas unNinja + cantidad) 100
+herramientaSinExcederse :: Herramienta -> Ninja -> Herramienta
+herramientaSinExcederse unaHerramienta unNinja = (nombreHerramienta unaHerramienta, max (100-sumaDeHerramientas unNinja) 0)
 
-herramientaAdquirida :: Herramienta-> Ninja -> Int -> Herramienta
-herramientaAdquirida unaHerramienta unNinja cantidad = unaHerramienta{cantDisponible = totalAdquirido unNinja cantidad}
-
-obtenerHerraienta:: Herramienta -> Ninja -> Ninja
-obtenerHerraienta unaHerramienta unNinja = unNinja{herramientas = herramientaAdquirida unaHerramienta unNinja (cantDisponible unaHerramienta) : herramientas unNinja}
-
-despuesDeUsar :: Herramienta -> Ninja -> [Herramienta]
-despuesDeUsar unaHerramienta unNinja = filter (\h -> nombreHerramienta h /= nombreHerramienta unaHerramienta) (herramientas unNinja)
+sumaDeHerramientas :: Ninja -> Int
+sumaDeHerramientas unNinja = sum (map cantidadHerramienta (herramientas unNinja))
 
 usarHerramienta :: Herramienta -> Ninja -> Ninja
-usarHerramienta unaHerramienta unNinja = unNinja{herramientas = despuesDeUsar unaHerramienta unNinja}
+usarHerramienta unaHerramienta = modificarHerramientas (filter (/= unaHerramienta)) -- point free
 
-data Mision = Mision{
-    ninjasNecesarios :: Int,
-    rangoRecomendado :: Int,
-    enemigos :: [Ninja],
+data Mision = UnaMision {
+    cantidadDeNinjas :: Int,
+    rangoRecomendable :: Int,
+    enemigosADerrotar :: [Enemigo],
     recompensa :: Herramienta
-} deriving(Show)
+} deriving (Show)
 
-rangoMenorA :: Int ->Ninja -> Bool
-rangoMenorA unRango unNinja= unRango> rango unNinja
+type Enemigo = Ninja
+misionHola :: Mision
+misionHola = UnaMision 3 2 [] ("Kunai", 14)
 
-esDesafiante :: Mision -> [Ninja] -> Bool
-esDesafiante unaMision equipo = any (rangoMenorA (rangoRecomendado unaMision)) equipo && length (enemigos unaMision)>=2
+type Equipo = [Ninja]
 
-bombaDeHumo3 :: Herramienta
-bombaDeHumo3 = Herramienta "Bomba de Humo" 3
-shuriken :: Herramienta
-shuriken = Herramienta "Shuriken" 5
-kunai :: Herramienta
-kunai = Herramienta "Kunai" 14
+esDesafiante ::  Mision -> Equipo -> Bool
+esDesafiante unaMision unEquipo = algunoTieneMenorRangoDelRecomendado unaMision unEquipo && cantidadDeEnemigosADerrotar unaMision == 2
 
-recompensasCopadas :: [Herramienta]
-recompensasCopadas = [bombaDeHumo3,shuriken,kunai]
+algunoTieneMenorRangoDelRecomendado :: Mision -> Equipo -> Bool
+algunoTieneMenorRangoDelRecomendado unaMision unEquipo = any (>= (rangoRecomendable unaMision)) (map rango unEquipo)
+
+cantidadDeEnemigosADerrotar :: Mision -> Int
+cantidadDeEnemigosADerrotar unaMision = length (enemigosADerrotar unaMision)
 
 esCopada :: Mision -> Bool
-esCopada unaMision = recompensa unaMision `elem` recompensasCopadas
+esCopada unaMision = elem (recompensa unaMision) recompensasCopadas 
 
-tienenLosNinjasNecesarios :: [Ninja] -> Mision -> Bool
-tienenLosNinjasNecesarios equipo mision = length equipo >= ninjasNecesarios mision
+recompensasCopadas :: [Herramienta]
+recompensasCopadas = [("Bomba de humo", 3),("Shuriken", 5),("Kunai",14)]
 
-esFactible ::  Mision-> [Ninja] -> Bool
-esFactible unaMision equipo = (not.esDesafiante unaMision) equipo &&
- (tienenLosNinjasNecesarios equipo unaMision || sum (map cantidadHerramientas equipo) > 500)
+esFactible :: Equipo -> Mision -> Bool
+esFactible unEquipo unaMision = (not.esDesafiante unaMision) unEquipo && estanBienPreparados unEquipo unaMision
 
-modificarRango :: (Int->Int)-> Ninja -> Ninja
-modificarRango modificador unNinja = unNinja{rango = modificador (rango unNinja)}
+estanBienPreparados :: Equipo -> Mision -> Bool
+estanBienPreparados unEquipo unaMision= estanBienArmados unEquipo || cuentanConLaCantidadDeNinjasNecesarios unEquipo unaMision
 
-ninjasQueSobreviven :: Mision -> [Ninja] -> [Ninja]
-ninjasQueSobreviven unaMision = filter (not.rangoMenorA (rangoRecomendado unaMision))
+cuentanConLaCantidadDeNinjasNecesarios :: Equipo -> Mision -> Bool
+cuentanConLaCantidadDeNinjasNecesarios unEquipo unaMision = length unEquipo >= cantidadDeNinjas unaMision
 
-fallarMision :: Mision -> [Ninja] -> [Ninja]
-fallarMision unaMision equipo = map (modificarRango (\x -> x - 2)) (ninjasQueSobreviven unaMision equipo)
+estanBienArmados :: Equipo -> Bool
+estanBienArmados unEquipo = (>500).sumaDeHerramientasDelEquipo $ unEquipo
 
-cumplirMision :: Mision -> [Ninja] -> [Ninja]
-cumplirMision unaMision = map (modificarRango (+1).obtenerHerraienta (recompensa unaMision))
+sumaDeHerramientasDelEquipo :: Equipo -> Int
+sumaDeHerramientasDelEquipo unEquipo = sum (map sumaDeHerramientas unEquipo)
+
+modificarRango :: (Int->Int) -> Ninja -> Ninja
+modificarRango unaFuncion unNinja = unNinja {rango= unaFuncion.rango $ unNinja}
+
+fallarMision :: Equipo -> Mision -> Equipo
+fallarMision unEquipo unaMision = disminuirEn2RangoDeSobrevivientes (sobrevivientes unaMision unEquipo)
+
+disminuirEn2RangoDeSobrevivientes :: Equipo -> Equipo
+disminuirEn2RangoDeSobrevivientes = map (modificarRango (subtract 2)) -- point free
+
+sobrevivientes :: Mision -> Equipo -> Equipo
+sobrevivientes unaMision unEquipo = filter (\ninja -> rango ninja >= rangoRecomendable unaMision) unEquipo
+
+cumplirMision :: Mision -> Equipo -> Equipo
+cumplirMision unaMision unEquipo = darRecompensaAlEquipo unaMision.promocionarDeRango $ unEquipo
+
+promocionarDeRango :: Equipo -> Equipo
+promocionarDeRango = map (modificarRango (+1)) -- point free
+
+darRecompensaAlEquipo :: Mision -> Equipo -> Equipo
+darRecompensaAlEquipo unaMision unEquipo = map (obtenerHerramienta (recompensa unaMision)) unEquipo
+
+modificarEnemigosDeMision :: ([Enemigo]->[Enemigo]) -> Mision -> Mision
+modificarEnemigosDeMision unaFuncion unaMision = unaMision {enemigosADerrotar = unaFuncion.enemigosADerrotar $ unaMision}
+
+modificarCantidadDeNinjasDeMision :: (Int->Int) -> Mision -> Mision
+modificarCantidadDeNinjasDeMision unaFuncion unaMision = unaMision {cantidadDeNinjas = unaFuncion.cantidadDeNinjas $ unaMision}
 
 clonesDeSombra :: Int -> Jutsu
-clonesDeSombra clones unaMision = unaMision{ninjasNecesarios = max (ninjasNecesarios unaMision - clones) 1}
+clonesDeSombra clonesCreados = modificarCantidadDeNinjasDeMision (max 1.subtract clonesCreados) --point free
 
 fuerzaDeUnCentenar :: Jutsu
-fuerzaDeUnCentenar unaMision = unaMision {enemigos = filter (rangoMenorA 500) (enemigos unaMision)}
+fuerzaDeUnCentenar = modificarEnemigosDeMision (filter (\enemigo -> rango enemigo > 500)) --point free
 
-aplicarJutsus :: Mision -> [Ninja] -> Mision
-aplicarJutsus unaMision equipo = foldl (\m j -> j m) unaMision (concatMap jutsus equipo)
+ejecutarMision :: Equipo -> Mision -> Equipo
+ejecutarMision unEquipo = completarMision unEquipo . usarTodosSusJutsus unEquipo
 
-ejecutarMision :: Mision -> [Ninja] -> Bool
-ejecutarMision unaMision equipo = esCopada(aplicarJutsus unaMision equipo) || esFactible (aplicarJutsus unaMision equipo) equipo
+usarTodosSusJutsus :: Equipo -> Mision -> Mision
+usarTodosSusJutsus unEquipo unaMision = foldr ($) unaMision . concatMap jutsus $ unEquipo
 
-zetsuBase :: Ninja
-zetsuBase = Ninja "Zetsu" [] [] 600 
-
-modificarNombre :: Ninja -> String -> Ninja
-modificarNombre unNinja string =unNinja{nombre = nombre unNinja ++ string}
-
-infinito :: [String]
-infinito = map show [1..]
-
-zetsus :: [Ninja]
-zetsus = map (modificarNombre zetsuBase) infinito
-
-granGuerraNinja :: Mision
-granGuerraNinja = Mision 100000 100 zetsus abanicoMadaraUchiha
-
-abanicoMadaraUchiha :: Herramienta
-abanicoMadaraUchiha = undefined
-
-{- a) Funciona correctamente con esDesafiante ya que en la que encuentra a alguien con 
-rango bajo (any) y recorre +2 posiciones retorna True
-b) la recompensa de la mision no es una lista infinita y a la vez no es ningun elementoCopado asi que
-devuelve False
-c) la funcion no retorna nada, ya que no finaliza de filtrar los enemigos de la lista infinita
-mas alla de que nosotros sepamos que todos tienen el mismo rango 
--}
+completarMision :: Equipo -> Mision -> Equipo
+completarMision unEquipo unaMision
+ | esCopada unaMision || esFactible unEquipo unaMision = cumplirMision unaMision unEquipo
+ | otherwise                                           = fallarMision unEquipo unaMision
