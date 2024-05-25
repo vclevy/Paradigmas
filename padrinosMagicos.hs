@@ -1,32 +1,35 @@
+import Text.Show.Functions
 
 data Chico = Chico {
     nombre :: String,
     edad :: Float,
     habilidades :: [String],
-    deseos :: [Chico -> Chico] --me hace ruido este tipo de dato!!
+    deseos :: [Chico -> Chico]
 }
 
 -- PARTE A
 aprenderHabilidades :: Chico -> String -> Chico
 aprenderHabilidades unChico habilidad = unChico{habilidades = habilidad : habilidades unChico}
 
-serGrosoEnNeedForSpeed :: Chico -> [String] -> Chico
-serGrosoEnNeedForSpeed = foldl aprenderHabilidades
+serGrosoEnNeedForSpeed :: [String] -> Chico -> Chico
+serGrosoEnNeedForSpeed unaString unChico = foldl aprenderHabilidades unChico unaString
 
 serMayor :: Chico -> Chico
-serMayor unChico = modificarEdad unChico (*(18/edad unChico))
+serMayor unChico = modificarEdad (*(18/edad unChico)) unChico
 
 cumplirDeseo :: Chico -> (Chico -> Chico) -> Chico
 cumplirDeseo unChico unDeseo = unDeseo unChico
 
 wanda :: Chico -> Chico
-wanda unChico = (((`cumplirDeseo`head(deseos unChico)).(`modificarEdad`(+1)))unChico) {deseos = init (deseos unChico)}
+wanda unChico = ((cumlpirPrimerDeseo.modificarEdad(+1))unChico) {deseos = init (deseos unChico)}
+cumlpirPrimerDeseo :: Chico -> Chico
+cumlpirPrimerDeseo unChico = cumplirDeseo unChico (head(deseos unChico))
 
 cosmo :: Chico -> Chico
-cosmo unChico = modificarEdad unChico (/2)
+cosmo = modificarEdad (/2) 
 
-modificarEdad :: Chico -> (Float->Float) -> Chico
-modificarEdad unChico modificador = unChico{edad = modificador (edad unChico)}
+modificarEdad :: (Float -> Float) -> Chico -> Chico
+modificarEdad modificador unChico = unChico {edad = modificador (edad unChico)}
 
 muffinMagico :: Chico -> Chico
 muffinMagico unChico = foldl cumplirDeseo unChico (deseos unChico)
@@ -63,8 +66,39 @@ tootie = Chica "Vicky's little sister" (tieneHabilidad "sabe cocinar")
 habilidadesProhibidas :: [String]
 habilidadesProhibidas = ["enamorar", "matar" , "dominar el mundo"]
 
-tomaPrimeras5habilidades :: [String] -> [String]
-tomaPrimeras5habilidades = take 5 
+tomaCinco :: Chico -> Chico
+tomaCinco unChico = unChico{habilidades = take 5 (habilidades unChico)}
 
-infractoresDeDaRules :: Chico -> [String]
-infractoresDeDaRules unChico = tomaPrimeras5habilidades(filter )
+tieneAlgunaDeLasProhibidas :: Chico -> Bool
+tieneAlgunaDeLasProhibidas unChico = (tieneHabilidad "enamorar".tomaCinco) unChico ||(tieneHabilidad "matar".tomaCinco) unChico ||(tieneHabilidad "Dominar el mundo".tomaCinco) unChico
+
+todosLosDeseos :: [Chico] -> [Chico]
+todosLosDeseos  =  map muffinMagico 
+
+infractoresDeDaRules :: [Chico] -> [String]
+infractoresDeDaRules losChicos = map nombre (filter tieneAlgunaDeLasProhibidas (todosLosDeseos losChicos))
+
+{-Ejemplos-}
+
+timmy :: Chico
+timmy = Chico {
+    nombre = "Timmy",
+    edad = 15.5,
+    habilidades = ["Programación", "Fútbol","matar"],
+    deseos = [serMayor]
+}
+
+chico2 :: Chico
+chico2 = Chico {
+    nombre = "Maria",
+    edad = 17,
+    habilidades = ["Cocina", "Baile"],
+    deseos = [serMayor, serGrosoEnNeedForSpeed ["Conducción"]]
+}
+
+chico3 :: Chico
+chico3 = Chico {
+    nombre = "Carlos",
+    habilidades = ["Lectura", "Pintura"],
+    deseos = [cumlpirPrimerDeseo, muffinMagico, serGrosoEnNeedForSpeed ["needForSpeed2"]]
+}
