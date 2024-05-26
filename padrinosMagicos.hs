@@ -11,8 +11,17 @@ data Chico = Chico {
 aprenderHabilidades :: Chico -> String -> Chico
 aprenderHabilidades unChico habilidad = unChico{habilidades = habilidad : habilidades unChico}
 
-serGrosoEnNeedForSpeed :: [String] -> Chico -> Chico
-serGrosoEnNeedForSpeed unaString unChico = foldl aprenderHabilidades unChico unaString
+serGrosoEnNeedForSpeed :: Chico -> Chico
+serGrosoEnNeedForSpeed unChico = foldl aprenderHabilidades unChico todosLosNFS
+
+modificarTexto :: String -> String-> String
+modificarTexto unTexto agregado = unTexto ++ agregado
+
+nfs :: [String]
+nfs = map show [1..21]
+
+todosLosNFS :: [String]
+todosLosNFS = map (modificarTexto "needForSpeed") nfs
 
 serMayor :: Chico -> Chico
 serMayor unChico = modificarEdad (*(18/edad unChico)) unChico
@@ -78,27 +87,4 @@ todosLosDeseos  =  map muffinMagico
 infractoresDeDaRules :: [Chico] -> [String]
 infractoresDeDaRules losChicos = map nombre (filter tieneAlgunaDeLasProhibidas (todosLosDeseos losChicos))
 
-{-Ejemplos-}
 
-timmy :: Chico
-timmy = Chico {
-    nombre = "Timmy",
-    edad = 15.5,
-    habilidades = ["Programación", "Fútbol","matar"],
-    deseos = [serMayor]
-}
-
-chico2 :: Chico
-chico2 = Chico {
-    nombre = "Maria",
-    edad = 17,
-    habilidades = ["Cocina", "Baile"],
-    deseos = [serMayor, serGrosoEnNeedForSpeed ["Conducción"]]
-}
-
-chico3 :: Chico
-chico3 = Chico {
-    nombre = "Carlos",
-    habilidades = ["Lectura", "Pintura"],
-    deseos = [cumlpirPrimerDeseo, muffinMagico, serGrosoEnNeedForSpeed ["needForSpeed2"]]
-}
