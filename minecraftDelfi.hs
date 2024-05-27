@@ -1,7 +1,8 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use infix" #-}
+{-# HLINT ignore "Eta reduce" #-}
 import Text.Show.Functions
-import Data.List ((\\))
+import Data.List (intersect,(\\))
 
 data Personaje = UnPersonaje {
         nombre:: String,
@@ -9,38 +10,37 @@ data Personaje = UnPersonaje {
         inventario:: [Material]
 } deriving (Show,Eq)
 
-type Material = (String,Int)
+type Material = (String, Int)
 
-data Receta = Receta{
-    receta::[Material],
-    objeto :: Material,
+data Receta = Receta {
+    ingredientes :: [Material],
+    producto :: Material,
     tiempo :: Int
-}deriving (Show,Eq)
-
-tieneLosObjetos :: Receta -> Personaje -> Bool
-tieneLosObjetos unaReceta unPersonaje = all (tieneElObjeto unPersonaje) (receta unaReceta)
-
-tieneElObjeto :: Personaje -> Material -> Bool
-tieneElObjeto unPersonaje unMaterial = elem (fst unMaterial) (map fst (inventario unPersonaje))
-
-personaje :: Personaje
-personaje = UnPersonaje {
-    nombre = "Steve",
-    puntaje = 0,
-    inventario = [("Madera",2), ("Piedra",3), ("Hierro",4), ("Diamante",1)]
 }
 
-recetaPico :: Receta
-recetaPico = Receta [("Madera",2), ("Piedra",4)] ("pico",1) 20
+tieneLosObjetos :: Receta -> Personaje -> Bool
+tieneLosObjetos unaReceta unPersonaje = all (`elem` inventario unPersonaje) (ingredientes unaReceta)
 
-modificarPuntaje :: (Int->Int) -> Personaje -> Personaje
-modificarPuntaje modificador unPersonaje = unPersonaje{puntaje = modificador (puntaje unPersonaje)}
+quitarUno :: Material -> Material
+quitarUno (nombre, cantidad) = (nombre, cantidad-1)
 
+materialesUsados :: [Material] -> [Material]
+materialesUsados losMateriales = map quitarUno losMateriales
+listaMaterialesUsados :: Receta -> Personaje -> [Material]
+listaMaterialesUsados unaReceta unPersonaje= materialesUsados(intersect (ingredientes unaReceta) (inventario unPersonaje))
+
+listaMaterialesSinUsar :: Receta -> Personaje -> [Material]
+listaMaterialesSinUsar unaReceta unPersonaje = inventario unPersonaje \\ ingredientes unaReceta 
 
 tomarObjetos :: Receta -> Personaje -> Personaje
-tomarObjetos unaReceta unPersonaje = unPersonaje{inventario = receta unaReceta \\ inventario unPersonaje}
+tomarObjetos unaReceta unPersonaje = unPersonaje { inventario = listaMaterialesUsados unaReceta unPersonaje ++ listaMaterialesSinUsar unaReceta unPersonaje}
+agregarObjetoAlInventario :: Receta -> Personaje -> Personaje
+agregarObjetoAlInventario unaReceta unPersonaje = unPersonaje { inventario = producto unaReceta : inventario unPersonaje }
+
+modificarPuntaje :: (Int->Int) -> Personaje -> Personaje
+modificarPuntaje modificador unPersonaje = unPersonaje { puntaje = modificador (puntaje unPersonaje) }
 
 craftear :: Receta -> Personaje -> Personaje
 craftear unaReceta unPersonaje
-    | tieneLosObjetos unaReceta unPersonaje=(modificarPuntaje (+10*tiempo unaReceta). tomarObjetos unaReceta) unPersonaje
+    | tieneLosObjetos unaReceta unPersonaje = (agregarObjetoAlInventario unaReceta . modificarPuntaje (+10*tiempo unaReceta) . tomarObjetos unaReceta) unPersonaje
     | otherwise = modificarPuntaje (+(-100)) unPersonaje
