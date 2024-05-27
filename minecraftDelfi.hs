@@ -2,7 +2,8 @@
 {-# HLINT ignore "Use infix" #-}
 {-# HLINT ignore "Eta reduce" #-}
 import Text.Show.Functions
-import Data.List (intersect,(\\))
+import Data.List (intersect,(\\),find)
+
 
 data Personaje = UnPersonaje {
         nombre:: String,
@@ -17,6 +18,8 @@ data Receta = Receta {
     producto :: Material,
     tiempo :: Int
 }deriving(Show,Eq)
+
+--CRAFT
 
 tieneLosObjetos :: Receta -> Personaje -> Bool
 tieneLosObjetos unaReceta unPersonaje = all (`elem` inventario unPersonaje) (ingredientes unaReceta)
@@ -63,3 +66,39 @@ crafteoSucesivo personaje recetas = foldl craftear personaje (duplicanYPuede rec
 masPuntosOrdenado :: [Receta] -> Personaje -> Bool
 masPuntosOrdenado recetas personaje = puntaje (crafteoSucesivo personaje recetas ) > puntaje ((crafteoSucesivo personaje . reverse)recetas)
 
+--MINE
+
+data Bioma = Bioma{
+    materiales::[Material],
+    condicion :: String
+}
+
+type Herramienta = Bioma -> Material
+
+agregarAInventario :: Material -> Personaje -> Personaje
+agregarAInventario unMaterial unPersonaje = unPersonaje{puntaje = puntaje unPersonaje +50, inventario = unMaterial: inventario unPersonaje}
+
+hacha :: Herramienta
+hacha unBioma = (last.materiales) unBioma
+
+espada :: Herramienta
+espada unBioma = (head.materiales) unBioma
+
+pico :: Int-> Herramienta
+pico presicion unBioma = materiales unBioma !! presicion
+
+puedeMinar :: Personaje -> Bioma -> Bool
+puedeMinar personaje bioma = elem (condicion bioma) (map fst (inventario personaje))
+
+minar :: Personaje -> Herramienta -> Bioma -> Personaje
+minar personaje herramienta bioma 
+    | puedeMinar personaje bioma = agregarAInventario (herramienta bioma) personaje
+    | otherwise = personaje
+
+-- pala :: Personaje -> Herramienta
+-- pala personaje bioma = pico (materialDelMedio bioma) bioma
+--materialDelMedio :: Bioma -> Int
+--materialDelMedio  bioma = length(materiales bioma)/2
+
+hoz:: Herramienta
+hoz bioma = (head.tail.materiales) bioma
