@@ -120,3 +120,20 @@ completarMision :: Equipo -> Mision -> Equipo
 completarMision unEquipo unaMision
  | esCopada unaMision || esFactible unEquipo unaMision = cumplirMision unaMision unEquipo
  | otherwise                                           = fallarMision unEquipo unaMision
+
+granGuerraNinja :: Mision
+granGuerraNinja = UnaMision 100000 100 zetsusInfinitos abanicoDeMadaraUchiha
+
+zetsusInfinitos :: [Ninja]
+zetsusInfinitos = map zetsu [1..]
+
+zetsu :: Int -> Ninja
+zetsu unNumero = UnNinja {
+  nombre       = "Zetsu " ++ show unNumero,
+  rango        = 600,
+  jutsus       = [],
+  herramientas = []
+} 
+
+abanicoDeMadaraUchiha :: Herramienta
+abanicoDeMadaraUchiha = ("Abanico de Madara Uchiha",1)
