@@ -21,16 +21,16 @@ modificarHabilidades :: ([Habilidad]->[Habilidad]) -> Barbaro -> Barbaro
 modificarHabilidades unaFuncion unBarbaro = unBarbaro {habilidades = unaFuncion.habilidades $ unBarbaro}
 
 espadas :: Int -> Objeto
-espadas pesoEspada = modificarFuerza (+ (2*pesoEspada))
+espadas pesoEspada = modificarFuerza (+ (2*pesoEspada)) --point free
 
 amuletosMisticos :: Habilidad -> Objeto
-amuletosMisticos unaHabilidad unBarbaro = modificarHabilidades (unaHabilidad:) unBarbaro
+amuletosMisticos unaHabilidad unBarbaro = modificarHabilidades (++ [unaHabilidad]) unBarbaro
 
 varitasDefectuosas :: Objeto
-varitasDefectuosas = modificarHabilidades ("hacer Magia":).modificarObjetos (take 0)
+varitasDefectuosas = modificarHabilidades (++ ["hacer Magia"]).modificarObjetos (take 0) -- point free
 
 ardilla:: Objeto
-ardilla unBarbaro = unBarbaro
+ardilla unBarbaro = unBarbaro -- tambien puede ser ardilla unBarbaro = id (el id no hace nada)
 
 cuerda:: Objeto -> Objeto -> Objeto
 cuerda unObjeto otroObjeto = unObjeto.otroObjeto
