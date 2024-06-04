@@ -30,24 +30,33 @@ valorTesoro unTesoro = precio unTesoro + 2* antiguedad unTesoro
 --Parte 2 
 
 type Clave = [Char]
+type Herramienta = Clave -> Clave
 
-martillo :: Clave -> Clave
+martillo :: Herramienta
 martillo unaClave = drop 3 unaClave
 
-llaveMaestra :: Clave -> Clave
+llaveMaestra :: Herramienta
 llaveMaestra _ = []
 
-efectoGanzua :: Clave -> Clave
+efectoGanzua :: Herramienta
 efectoGanzua unaClave = drop 1 unaClave
 
-ganzuaGancho :: Clave -> Clave
+ganzuaGancho :: Herramienta
 ganzuaGancho unaClave = filter (not.isUpper) (efectoGanzua unaClave)
 
-ganzuaRastrillo :: Clave -> Clave
+ganzuaRastrillo :: Herramienta
 ganzuaRastrillo unaClave = filter (not.isDigit) (efectoGanzua unaClave)
 
-ganzuaRombo :: Clave -> Clave -> Clave
+ganzuaRombo :: Clave -> Herramienta
 ganzuaRombo inscripcion unaClave = filter (not.tieneLetra inscripcion) unaClave
 
 tieneLetra :: Clave -> Char -> Bool
 tieneLetra unaClave unaLetra = elem unaLetra unaClave
+
+tensor :: Herramienta
+tensor unaClave = map toUpper unaClave
+
+socotroco :: Herramienta -> Herramienta -> Herramienta
+socotroco unaHerramienta otraHerramienta unaClave = (otraHerramienta.unaHerramienta) unaClave
+
+--Parte 3
