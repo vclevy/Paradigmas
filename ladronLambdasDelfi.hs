@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Eta reduce" #-}
 import Text.Show.Functions
 import Data.Char(isUpper,isDigit,toUpper)
 
@@ -33,13 +35,13 @@ type Clave = [Char]
 type Herramienta = Clave -> Clave
 
 martillo :: Herramienta
-martillo unaClave = drop 3 unaClave
+martillo  = drop 3 
 
 llaveMaestra :: Herramienta
 llaveMaestra _ = []
 
 efectoGanzua :: Herramienta
-efectoGanzua unaClave = drop 1 unaClave
+efectoGanzua  = drop 1 
 
 ganzuaGancho :: Herramienta
 ganzuaGancho unaClave = filter (not.isUpper) (efectoGanzua unaClave)
@@ -48,16 +50,16 @@ ganzuaRastrillo :: Herramienta
 ganzuaRastrillo unaClave = filter (not.isDigit) (efectoGanzua unaClave)
 
 ganzuaRombo :: Clave -> Herramienta
-ganzuaRombo inscripcion unaClave = filter (not.tieneLetra inscripcion) unaClave
+ganzuaRombo inscripcion  = filter (not.tieneLetra inscripcion) 
 
 tieneLetra :: Clave -> Char -> Bool
 tieneLetra unaClave unaLetra = elem unaLetra unaClave
 
 tensor :: Herramienta
-tensor unaClave = map toUpper unaClave
+tensor = map toUpper 
 
 socotroco :: Herramienta -> Herramienta -> Herramienta
-socotroco unaHerramienta otraHerramienta unaClave = (otraHerramienta.unaHerramienta) unaClave
+socotroco unaHerramienta otraHerramienta  = otraHerramienta.unaHerramienta 
 
 --Parte 3
 
@@ -84,16 +86,14 @@ modificarHerramientas nuevas unLadron = unLadron{herramientas = nuevas}
 modificarTesoros :: ([Tesoro]-> [Tesoro]) -> Ladron -> Ladron
 modificarTesoros modificador unLadron = unLadron{tesorosRobados = modificador (tesorosRobados unLadron)}
 
-
 usarHerramientas :: Cofre -> [Herramienta] -> [Herramienta]
+usarHerramientas _ [] = []
 usarHerramientas unCofre (h:hs)
     | abre h unCofre = hs
     | otherwise = usarHerramientas unCofre hs
-usarHerramientas _ [] = []
-
 
 abre :: Herramienta -> Cofre -> Bool
-abre unaHerramienta unCofre = unaHerramienta (cerradura unCofre) == []
+abre unaHerramienta unCofre = (null.unaHerramienta) (cerradura unCofre)
 
 laUltimaAbre :: Cofre -> [Herramienta] -> Bool
 laUltimaAbre unCofre herramientas = abre (last herramientas) unCofre
@@ -102,7 +102,7 @@ robarCofre :: Ladron -> Cofre -> Ladron
 robarCofre unLadron unCofre 
     | laUltimaAbre unCofre (herramientas unLadron) || (not.null)(usarHerramientas unCofre (herramientas unLadron)) = 
         (modificarTesoros (++[suTesoro unCofre]).modificarHerramientas (usarHerramientas unCofre (herramientas unLadron))) unLadron
-    | otherwise = modificarHerramientas ([]) unLadron
+    | otherwise = modificarHerramientas [] unLadron
 
 manu :: Ladron
 manu = Ladron "manu" [martillo,ganzuaGancho, ganzuaRastrillo] []
@@ -110,6 +110,7 @@ manu = Ladron "manu" [martillo,ganzuaGancho, ganzuaRastrillo] []
 cofre1 :: Cofre
 cofre1 = Cofre "qwERTY" tesorito
 
+packManu :: [Herramienta]
 packManu = [martillo,ganzuaGancho, ganzuaRastrillo]
 
 tesorito :: Tesoro
