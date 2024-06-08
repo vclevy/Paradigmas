@@ -1,9 +1,5 @@
-{-# OPTIONS_GHC -Wno-missing-fields #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Eta reduce" #-}
-{-# HLINT ignore "Redundant bracket" #-}
+
 import Text.Show.Functions
-import Language.Haskell.TH (Con)
 
 data Investigador = Investigador{
     nombre :: String,
@@ -28,8 +24,8 @@ deltaSegun ponderacion transformacion valor = abs ((ponderacion . transformacion
 --PUNTO 1
 enloquecer :: Int ->Investigador -> Investigador
 enloquecer unNumero unInvestigador
-    | cordura unInvestigador - unNumero >=0 = Investigador{ cordura = cordura unInvestigador - unNumero}
-    | otherwise = Investigador{cordura = 0}
+    | cordura unInvestigador - unNumero >=0 = unInvestigador{ cordura = cordura unInvestigador - unNumero}
+    | otherwise = unInvestigador{cordura = 0}
 
 hallarItem :: Item -> Investigador -> Investigador
 hallarItem unItem unInvestigador = (enloquecer (valor unItem) unInvestigador){items = unItem : items unInvestigador}
@@ -49,7 +45,7 @@ potencial unInvestigador
     | otherwise = cordura unInvestigador * ((1+).length.sucesosEvitados) unInvestigador + (valorMaxItems.items) unInvestigador
 
 liderActual :: [Investigador] -> Investigador
-liderActual unGrupo = maximoSegun potencial unGrupo
+liderActual = maximoSegun potencial
 
 --PUNTO 4
 deltaCordura :: Int -> [Investigador] -> Int
@@ -84,16 +80,16 @@ dagaMaldita :: Item
 dagaMaldita = Item "Daga maldita" 3
 
 aplicarAlPrimero :: (a -> a) -> [a] -> [a]
-aplicarAlPrimero f [] = []
+aplicarAlPrimero _ [] = []
 aplicarAlPrimero f (x:xs) = f x : xs
 
 enfrentarSuceso :: Suceso -> Consecuencia
 enfrentarSuceso unSuceso unGrupo
-    | (evitarConsecuencias unSuceso) unGrupo = map ((agregarDescripcion.descripcion) unSuceso . enloquecer 1) unGrupo
+    | evitarConsecuencias unSuceso unGrupo = map ((agregarDescripcion.descripcion) unSuceso . enloquecer 1) unGrupo
     | otherwise = foldl (\grupo consecuencia -> consecuencia grupo) (map (enloquecer 1) unGrupo) (consecuencias unSuceso)
 
 agregarDescripcion :: String -> Investigador-> Investigador
-agregarDescripcion unaDescripcion unInvestigador = Investigador{sucesosEvitados = unaDescripcion:(sucesosEvitados unInvestigador)}
+agregarDescripcion unaDescripcion unInvestigador = unInvestigador{sucesosEvitados = unaDescripcion:sucesosEvitados unInvestigador}
 
 elMasAterrador :: [Investigador] -> [Suceso] -> String
 elMasAterrador = undefined
