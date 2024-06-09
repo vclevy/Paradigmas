@@ -42,7 +42,7 @@ concatenarHabilidades :: [Habilidad] -> [Habilidad]
 concatenarHabilidades habilidadesDeBarbaro = [concat habilidadesDeBarbaro]
 
 ponerEnMayuscula :: [Habilidad] -> [Habilidad]
-ponerEnMayuscula =  map (map toUpper)
+ponerEnMayuscula =  (map (map toUpper))
 
 megafonoBarbarico :: Objeto
 megafonoBarbarico = cuerda ardilla megafono
@@ -54,7 +54,7 @@ invasionDeSuciosDuendes :: Evento
 invasionDeSuciosDuendes = sabeEscribirPoesiaAtroz
 
 sabeEscribirPoesiaAtroz :: Evento
-sabeEscribirPoesiaAtroz = tieneHabilidad "Escribir Poesía Atroz"
+sabeEscribirPoesiaAtroz unBarbaro = tieneHabilidad "Escribir Poesía Atroz" unBarbaro
 
 tieneHabilidad :: String -> Barbaro -> Bool
 tieneHabilidad unaHabilidad unBarbaro = elem unaHabilidad (habilidades unBarbaro)
@@ -96,26 +96,17 @@ contarVocales :: String -> Int
 contarVocales = length . filter (`elem` "aeiouAEIOU")
 
 comienzanEnMayuscula :: [Habilidad] -> Bool
-comienzanEnMayuscula habilidadesDeBarbaro = all isUpper (map head habilidadesDeBarbaro)
+comienzanEnMayuscula habilidadesDeBarbaro = all esMayuscula (map head habilidadesDeBarbaro)
+
+esMayuscula :: Char -> Bool
+esMayuscula = isUpper 
 
 sobrevivientes :: [Barbaro] -> Aventura -> [Barbaro]
-sobrevivientes listaDeBarbaros unaAventura = filter (siSobrevive unaAventura) listaDeBarbaros
+sobrevivientes listaDeBarbaros unaAventura = filter (siSobreviven unaAventura) listaDeBarbaros
 
-siSobrevive :: Aventura -> Barbaro -> Bool
-siSobrevive unaAventura unBarbaro = all (\evento -> evento unBarbaro) unaAventura
+siSobreviven :: Aventura -> Barbaro -> Bool
+siSobreviven unaAventura unBarbaro = unaAventura unBarbaro
 
-sinRepetidos :: [Habilidad] -> [Habilidad]
-sinRepetidos [] = []
-sinRepetidos (cabeza:cola) = cabeza : sinRepetidos (filter (/= cabeza) cola)
 
-modificarNombre :: (String->String) -> Barbaro -> Barbaro
-modificarNombre unaFuncion unBarbaro = unBarbaro {nombre = unaFuncion.nombre $ unBarbaro}
 
-descendiente :: Barbaro -> Barbaro
-descendiente unBarbaro = utilizarObjetos.modificarNombre(++ "*").modificarHabilidades sinRepetidos $ unBarbaro
 
-utilizarObjetos :: Barbaro -> Barbaro
-utilizarObjetos unBarbaro = foldr ($) unBarbaro (objetos unBarbaro)
-
-descendientes :: Barbaro -> [Barbaro]
-descendientes unBarbaro = iterate descendiente unBarbaro
