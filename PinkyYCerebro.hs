@@ -43,7 +43,7 @@ esAntropomorfico :: Criterio
 esAntropomorfico unAnimal= tieneHabilidad "hablar" unAnimal && iq unAnimal > 60
 
 noTanCuerdo :: Criterio
-noTanCuerdo unAnimal = (>2).length.filter pinkiesco.capacidades 
+noTanCuerdo unAnimal = (>2).length.filter pinkiesco.capacidades $ unAnimal
 
 pinkiesco :: Capacidad -> Bool
 pinkiesco unaCapacidad = take 6 unaCapacidad == "hacer " && esPalabraPinkiesca (drop 6 unaCapacidad)
@@ -82,15 +82,18 @@ experimento1 :: Experimento
 experimento1 = ([pinkificar, inteligenciaSuperior 10,superpoderes], esAntropomorfico)
 -- experimentoExitos experimento1 raton
 
-generarInformeDe :: (Animal -> b) -> [Animal] -> (Animal -> Animal) -> [b]
-generarInformeDe unCampo unosAnimales funcionModificadora = 
-  map (unCampo . funcionModificadora) unosAnimales
-
-listaDeCoefsInts :: [Animal] -> [Capacidad] -> Experimento -> [Int]
+{-listaDeCoefsInts :: [Animal] -> [Capacidad] -> Experimento -> [Int]
 listaDeCoefsInts unosAnimales unasCapacidades unExperimento = 
- map iq (tieneAlgunaHabilidad unasCapacidades.animalesExperimentados unExperimento $ unosAnimales)
+ map iq (tieneAlgunaHabilidad unasCapacidades.animalesExperimentados unExperimento $ unosAnimales) -}
 
+ -- necesito generar una abstraccion para la funcion de arriba, por si quiero hacer un informe con otros parámetros y otros criterios
+generarInformeDe :: (Animal -> b) -> [Animal] -> (Animal -> Animal) -> [b]
+generarInformeDe unCampo unosAnimales funcionModificadora = map (unCampo . funcionModificadora) unosAnimales
 
+generarInformeDeCoeficientes :: [Animal] -> [Capacidad] -> Experimento -> [Int]
+generarInformeDeCoeficientes unosAnimales unasCapacidades unExperimento = 
+  generarInformeDe iq (tieneAlgunaHabilidad unasCapacidades.animalesExperimentados unExperimento $ unosAnimales)  id
+    
 animalesExperimentados :: Experimento -> [Animal] -> [Animal]
 animalesExperimentados unExperimento unosAnimales = map (aplicarTransformaciones unExperimento) unosAnimales
 
@@ -104,4 +107,35 @@ tieneAlgunaHabilidad unasCapacidades unosAnimales = filter (`animalTieneCapacida
 --generateWordsUpTo, que toma una longitud y genera una lista con todas las posibles palabras de hasta la longitud dada.
 --generateWords que toma una longitud y genera una lista de palabras donde todas tienen exactamente la longitud dada. 
 
-generateWordsUpTo 
+abecedario :: [Char]
+abecedario = ['a'..'z']
+
+charToString :: Char -> String
+charToString unChar = [unChar]
+
+palabrasDe1Letra :: [String]
+palabrasDe1Letra = map charToString abecedario
+
+prefijarPalabrasConCaracteres :: [String] -> [Char] -> [String]
+prefijarPalabrasConCaracteres palabras caracteres = concatMap (\char -> map (char :) palabras) caracteres
+
+palabrasDe2Letras :: [String]
+palabrasDe2Letras = prefijarPalabrasConCaracteres palabrasDe1Letra abecedario
+
+palabrasDe3Letras :: [String]
+palabrasDe3Letras = prefijarPalabrasConCaracteres palabrasDe2Letras abecedario
+
+-- etcetera:
+
+palabrasDe4Letras :: [String]
+palabrasDe4Letras = prefijarPalabrasConCaracteres palabrasDe3Letras abecedario
+
+palabrasDe5Letras :: [String]
+palabrasDe5Letras = prefijarPalabrasConCaracteres palabrasDe4Letras abecedario
+
+palabrasDe6Letras :: [String]
+palabrasDe6Letras = prefijarPalabrasConCaracteres palabrasDe5Letras abecedario
+
+palabrasDeNLetras :: Int -> [String]
+palabrasDeNLetras 1 = palabrasDe1Letra
+palabrasDeNLetras n = prefijarPalabrasConCaracteres (palabrasDeNLetras (n - 1)) abecedario 

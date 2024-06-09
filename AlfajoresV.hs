@@ -21,29 +21,29 @@ coeficienteDeDulzor :: Alfajor -> Float
 coeficienteDeDulzor unAlfajor = fromIntegral (dulzor unAlfajor) / fromIntegral (peso unAlfajor)
 
 precioDeAlfajor :: Alfajor -> Int
-precioDeAlfajor unAlfajor = (peso unAlfajor * 2) + sum (map (preciosDeRellenos unAlfajor) (relleno unAlfajor))
+precioDeAlfajor unAlfajor = (peso unAlfajor * 2) + sum (map preciosDeRellenos (relleno unAlfajor))
 
-preciosDeRellenos :: Alfajor -> String -> Int
-preciosDeRellenos _ "Dulce de leche" = 12
-preciosDeRellenos _ "Mousse" = 15
-preciosDeRellenos _ "Fruta" = 12
+preciosDeRellenos :: String -> Int
+preciosDeRellenos "Dulce de leche" = 12
+preciosDeRellenos "Mousse" = 15
+preciosDeRellenos "Fruta" = 12
 
 esPotable :: Alfajor -> Bool
 esPotable unAlfajor = not (null (relleno unAlfajor)) && coeficienteDeDulzor unAlfajor>=0.1 && sonDelMismoSabor unAlfajor
 
 sonDelMismoSabor :: Alfajor -> Bool
-sonDelMismoSabor unAlfajor = all (== head (relleno unAlfajor)) (tail (relleno unAlfajor))
+sonDelMismoSabor unAlfajor = all (==head (relleno unAlfajor)) (relleno unAlfajor)
 
 abaratarAlfajor :: Alfajor -> Alfajor
 abaratarAlfajor unAlfajor = modificarPeso (subtract 10).modificarDulzor(subtract 7) $ unAlfajor
 
 modificarPeso :: (Int->Int)-> Alfajor -> Alfajor
 modificarPeso funcion unAlfajor = unAlfajor {peso = funcion (peso unAlfajor)}
+
 modificarDulzor :: (Int->Int)-> Alfajor -> Alfajor
-
 modificarDulzor funcion unAlfajor = unAlfajor {dulzor = funcion (dulzor unAlfajor)}
-modificarNombre :: String -> Alfajor -> Alfajor
 
+modificarNombre :: String -> Alfajor -> Alfajor
 modificarNombre nuevoNombre unAlfajor = unAlfajor {nombre = nuevoNombre}
 
 renombrarAlfajor :: Alfajor -> String -> Alfajor
