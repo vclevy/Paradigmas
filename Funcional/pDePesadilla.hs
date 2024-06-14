@@ -1,9 +1,11 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Avoid lambda using `infix`" #-}
 import Text.Show.Functions
 
 data Persona = UnaPersona{
     nombre :: String,
     recuerdos :: [Recuerdo]
-}deriving(Show)
+}deriving(Show,Eq)
 
 type Recuerdo = String
 
@@ -40,3 +42,39 @@ type Pesadilla = Persona -> Persona
 
 dormir :: [Pesadilla] -> Persona -> Persona
 dormir lasPesadillas unaPersona = foldl (flip($)) unaPersona lasPesadillas
+
+nuevaPesadilla :: Persona -> Persona
+nuevaPesadilla = modificarRecuerdos (map (\x -> x ++ "de la muerte"))
+
+-- Situaciones excepcionales
+
+esPesadilla :: Persona -> Pesadilla -> Bool
+esPesadilla unaPersona unSueño = unSueño unaPersona /= unaPersona
+
+segmentationFault :: Situacion
+segmentationFault unaNoche unaPersona = length(filter (esPesadilla unaPersona) unaNoche) > length (recuerdos unaPersona)
+
+aplicarPrimeraPesadilla :: Persona -> [Pesadilla] -> Persona
+aplicarPrimeraPesadilla unaPersona unaNoche= (head.filter (esPesadilla unaPersona)) unaNoche unaPersona 
+
+bugInicial :: Situacion
+bugInicial unaNoche unaPersona = take 1 ((recuerdos.aplicarPrimeraPesadilla unaPersona) unaNoche) /= take 1 (recuerdos unaPersona)
+
+falsaAlarma :: Situacion
+falsaAlarma unaNoche unaPersona = last unaNoche unaPersona == unaPersona
+
+deteccionesSituacion :: Situacion ->[Pesadilla] -> [Persona] ->Int
+deteccionesSituacion situacion unaNoche = length. filter (situacion unaNoche) 
+
+type Situacion = ([Pesadilla]->Persona -> Bool)
+
+unaSituacionEnTodas :: [Pesadilla] -> [Persona] -> Situacion ->  Bool
+unaSituacionEnTodas unaNoche grupo situacion = all (situacion unaNoche)  grupo
+
+algunaSituacionEnTodos :: [Situacion] -> [Pesadilla] -> [Persona] -> Bool
+algunaSituacionEnTodos situaciones unaNoche grupo = any (unaSituacionEnTodas unaNoche grupo) situaciones
+
+-- Dado que para saber si una falsa alarma necesitamos conocer el ultimo elemento de la lista, en una 
+--lista infinta no podemos conocer dicho elemento. En el caso de bug inicial, podriamos conocer el 
+--resultado ya que por su estrategia peresoza de evaluacion al encontrar la primera pesadilla ya da 
+--un resultado
