@@ -121,13 +121,13 @@ esObra(Obra) :-
 
 %Teniendo en cuenta la base de conocimientos que vimos en clase, traer resuelto para la clase que viene el siguiente pedido: Queremos saber si una obra es rioplatense, que es cuando la nacionalidad de su artista es platense (Uruguay o Argentina).
 
-nacionalidad(elsaBornemann, argentina).
+/*nacionalidad(elsaBornemann, argentina).
 nacionalidad(jorgeLuisBorges, argentina).
 nacionalidad(joseHernandez, argentina).
 nacionalidad(julioCortazar, argentina).
 nacionalidad(horacioQuiroga, uruguay).
 
-esObraRioPlatense2(Obra):-
+esObraRioPlatense(Obra):-
   escribio(Artista, Obra),
   esArtistaRioPlatense(Artista).
 
@@ -136,4 +136,17 @@ esArtistaRioPlatense(Artista):-
 
 esArtistaRioPlatense(Artista):-
   nacionalidad(Artista, uruguay).
+
+%otra forma 
+esArtistaRioPlatense(UnArtista):-
+    nacionalidad(UnArtista, Nacionalidad),
+    esNacionalidadRioplatense(Nacionalidad).
+
+esNacionalidadRioplatense(argentina).
+esNacionalidadRioplatense(uruguay).
+*/
+escribioSoloComics (UnAutor):-
+    forall(escribio(UnAutor,UnaObra), esComic(UnaObra)).
+
+
 
