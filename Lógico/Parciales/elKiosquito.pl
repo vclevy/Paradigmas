@@ -31,3 +31,10 @@ quienAtiende(Persona, Dia, HorarioPuntual):-
 foreverAlone(Persona, Dia, HorarioDeterminado):-
     quienAtiende(Persona,Dia,HorarioDeterminado),
     not((quienAtiende(OtraPersona, Dia, HorarioPuntual), Persona \= OtraPersona)).
+
+posibilidadesDeAtencion(Dia,Persona):-
+    atiende(Persona,Dia,HorarioInicio,HorarioFinal),
+    fin
+
+
+    
