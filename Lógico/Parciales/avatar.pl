@@ -30,14 +30,10 @@ controla(aang, fuego).
 controla(azula, rayo).
 controla(iroh, rayo).
 
-visito(aang, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,
-sectorMedio])).
-visito(iroh, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,
-sectorMedio])).
-visito(zuko, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,
-sectorMedio])).
-visito(toph, reinoTierra(fortalezaDeGralFong, [cuartel, dormitorios,
-enfermeria, salaDeGuerra, templo, zonaDeRecreo])).
+visito(aang, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,sectorMedio])).
+visito(iroh, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,sectorMedio])).
+visito(zuko, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,sectorMedio])).
+visito(toph, reinoTierra(fortalezaDeGralFong, [cuartel, dormitorios,enfermeria, salaDeGuerra, templo, zonaDeRecreo])).
 visito(aang, nacionDelFuego(palacioReal, 1000)).
 visito(katara, tribuAgua(norte)).
 visito(katara, tribuAgua(sur)).
