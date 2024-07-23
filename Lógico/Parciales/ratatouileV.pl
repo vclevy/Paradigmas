@@ -54,6 +54,8 @@ calorias(principal(Guarnicion,Tiempo),CaloriasDePlato):-
     caloriasDeGuarnicion(Guarnicion,Aporte),
     CaloriasDePlato is Coccion+Aporte.
 
+calorias(postre(CaloriasDePlato),CaloriasDePlato).
+
 caloriasDeCoccion(Tiempo,Coccion):-
     Coccion is Tiempo*5.
 
@@ -61,15 +63,13 @@ caloriasDeGuarnicion(papasFritas,50).
 caloriasDeGuarnicion(pure,20).
 caloriasDeGuarnicion(ensalada,0).
 
-calorias(postre(CaloriasDePlato),CaloriasDePlato).
-
 /*saludable(Plato):-
     plato(Plato,_),
     grupo(Plato). */
 
 criticaPositiva(Restoran,Critico):-
     trabajaEn(Restoran,_),
-    inspeccionSatisfactoria(Restoran).
+    inspeccionSatisfactoria(Restoran),
     reseniaPositiva(Critico,Restoran).
 
 reseniaPositiva(antonEgo,Restoran):-
@@ -81,11 +81,23 @@ reseniaPositiva(christophe,Restoran):-
     CantidadDeChefs>3.
 
 reseniaPositiva(cormillot,Restoran):-
-    forall((trabajaEn(Restoran,Persona),cocina(Persona,Plato,_)), saludable(Plato)),
-    forall(plato(Plato,entrada(Ingredientes)),member(zanahoria,Ingredientes)).
+    forall(platosDeUnRestoran(Restoran,Plato), saludable(Plato)),
+    forall(entradasDeRestoran(Restoran,Plato),tieneZanahoria(Plato)).
 
 especialistaEn(Plato,Restoran):-
     forall(chef(Persona,Restoran),cocinaBien(Persona,Plato)).
+
+platosDeUnRestoran(Restoran,Plato):-
+    trabajaEn(Restoran,Persona),
+    cocina(Persona,Plato,_).
+
+entradasDeRestoran(Restoran,Plato):-
+    platosDeUnRestoran(Restoran,Plato),
+    plato(Plato,entrada(_)).
+
+tieneZanahoria(Plato):-
+    plato(Plato,entrada(Ingredientes)),
+    member(zanahoria,Ingredientes).
 
 
 
