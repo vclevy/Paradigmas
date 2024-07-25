@@ -59,6 +59,14 @@ demandada(Carrera):-
     estudia(_,Carrera,_),
     forall(estudia(Nombre,Carrera,_),trabajaEnAlgoVinculado(Nombre)).
 
+/* functores:
+empleoPrivado(Empresa, Rubro).
+empleoPublico(Organismo, Dependencia, Rubro).
+planSocial(Organizacion).
+*/
+
+
+
 
 
 
