@@ -51,16 +51,58 @@ correPeligro(Jugador):-
 nivelPeligrosidad(Lugar,100):-
     hayMonstruos(Lugar).
 nivelPeligrosidad(Lugar, Nivel):-
-    not(HayMonstruos(Lugar)),
+    not(hayMonstruos(Lugar)),
     porcentajeHambrientos(Lugar, Porcentaje),
     poblacionTotal(Lugar, Total),
     Nivel is Porcentaje / Total.
-
+nivelPeligrosidad(Lugar, Nivel):-
+    lugar(Lugar,_,NivelOscuridad),
+    poblacionTotal(Lugar,0),
+    Nivel is NivelOscuridad * 10.
 
 poblacionTotal(Lugar,Total):-
     lugar(Lugar,Poblacion,_),
     length(Poblacion,Total).
 
-estaHambriento(Jugador):-
+estaHambrientoYEn(Jugador,Lugar):-
     jugador(Jugador,_,Hambre),
-    Hambre<4
+    lugar(Lugar,Personas,_),
+    member(Jugador,Personas),
+    Hambre<4.
+
+porcentajeHambrientos(Lugar, Porcentaje):-
+    findall(Jugador, estaHambrientoYEn(Jugador, Lugar),Hambrientos),
+    length(Hambrientos,Porcentaje).
+
+% Punto 3
+
+item(horno, [ itemSimple(piedra, 8) ]).
+item(placaDeMadera, [ itemSimple(madera, 1) ]).
+item(palo, [ itemCompuesto(placaDeMadera) ]).
+item(antorcha, [ itemCompuesto(palo), itemSimple(carbon, 1) ]).
+
+/*puedeConstruir(Jugador, Item):-         %itemSiple(elemento, cantidadNecesaria)
+    item(Item,Materiales),
+    tieneLosMateriales(Jugador, Materiales).
+
+tieneLosMateriales(Jugador, Materiales):-
+    jugador(Jugador, ItemsJugador,_),
+    */
+    
+  % Verifica si un jugador puede construir un ítem.
+puedeConstruir(Jugador, Item) :-
+    item(Item, Requisitos),
+    puedeCumplirRequisitos(Jugador, Requisitos).
+
+% Verifica si un jugador puede cumplir con todos los requisitos para construir un ítem.
+puedeCumplirRequisitos(_, []).
+puedeCumplirRequisitos(Jugador, [Requisito|OtrosRequisitos]) :-
+    cumpleRequisito(Jugador, Requisito),
+    puedeCumplirRequisitos(Jugador, OtrosRequisitos).
+
+% Verifica si un jugador cumple con un requisito (ya sea ítem simple o compuesto).
+cumpleRequisito(Jugador, itemSimple(Item, Cantidad)) :-
+    cantidadDelItem(Jugador, Item, CantidadPoseida),
+    CantidadPoseida >= Cantidad.
+cumpleRequisito(Jugador, itemCompuesto(ItemCompuesto)) :-
+    puedeConstruir(Jugador, ItemCompuesto).
