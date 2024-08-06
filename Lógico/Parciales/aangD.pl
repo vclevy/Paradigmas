@@ -106,12 +106,10 @@ lugaresPorZona(Personaje,Lugar):-
 lugaresVisitadosPor(Personaje,Lugares):-
     findall(Lugar,lugaresPorZona(Personaje,Lugar),Lugares).
 
-esDignoDeConocer(Lugar):-
-    visito(_,temploAire(Lugar)).
-esDignoDeConocer(temploAire(norte)).
-esDignoDeConocer(Lugar):-
-    visito(_,reinoTierra(Lugar,Elementos)),
-    not(member(muro,Elementos)).
+esDigno(tribuAgua(norte)).
+esDigno(temploAire(_)).
+esDigno(reinoTierra(Nombre, Estructura)):-
+    not(member(muro, Estructura)).
 
 esPopular(Lugar):-
     lugaresPorZona(_,Lugar),
