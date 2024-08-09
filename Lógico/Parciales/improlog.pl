@@ -62,13 +62,14 @@ instrumentosDelGrupo(Grupo,Instrumentos):-
     findall(Instrumento,integrante(Grupo,_,Instrumento), Instrumentos).
 
 sirve(Instrumento,Grupo):-
-    grupo(Grupo,tipo(formacionParticular,LosQueSirven)),
+    instrumentosQueLeSirven(Grupo,LosQueSirven),
     member(Instrumento,LosQueSirven).
 
-sirve(Instrumento,Grupo):-
-    grupo(Grupo,tipo(bigBand)),
-    member(Instrumento,[bateria,bajo,piano]).
+instrumentosQueLeSirven(Grupo,LeSirven):-
+    grupo(Grupo,tipo(formacionParticular,LeSirven)).
 
+instrumentosQueLeSirven(Grupo,[bateria,bajo,piano]):-
+    grupo(Grupo,tipo(bigBand)).
 
 % 5)
 
