@@ -8,17 +8,23 @@ esPersonaje(tayLee).
 esPersonaje(zuko).
 esPersonaje(azula).
 esPersonaje(iroh).
+esPersonaje(bumi).
+esPersonaje(suki).
 
 % esElementoBasico/1 nos permite conocer los elementos básicos que pueden controlar algunos personajes
+
 esElementoBasico(fuego).
 esElementoBasico(agua).
 esElementoBasico(tierra).
 esElementoBasico(aire).
 
 % elementoAvanzadoDe/2 relaciona un elemento básico con otro avanzado asociado
+
 elementoAvanzadoDe(fuego, rayo).
 elementoAvanzadoDe(agua, sangre).
 elementoAvanzadoDe(tierra, metal).
+
+% controla/2 relaciona un personaje con un elemento que controla
 
 controla(zuko, rayo).
 controla(toph, metal).
@@ -29,11 +35,18 @@ controla(aang, tierra).
 controla(aang, fuego).
 controla(azula, rayo).
 controla(iroh, rayo).
+controla(bumi,tierra).
 
-visito(aang, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,sectorMedio])).
-visito(iroh, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,sectorMedio])).
-visito(zuko, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,sectorMedio])).
-visito(toph, reinoTierra(fortalezaDeGralFong, [cuartel, dormitorios,enfermeria, salaDeGuerra, templo, zonaDeRecreo])).
+% visito/2 relaciona un personaje con un lugar que visitó. Los lugares son functores que tienen la siguiente forma:
+% reinoTierra(nombreDelLugar, estructura)
+% nacionDelFuego(nombreDelLugar, soldadosQueLoDefienden)
+% tribuAgua(puntoCardinalDondeSeUbica)
+% temploAire(puntoCardinalDondeSeUbica)
+
+visito(aang, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo, sectorMedio])).
+visito(iroh, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo, sectorMedio])).
+visito(zuko, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo, sectorMedio])).
+visito(toph, reinoTierra(fortalezaDeGralFong, [cuartel, dormitorios, enfermeria, salaDeGuerra, templo, zonaDeRecreo])).
 visito(aang, nacionDelFuego(palacioReal, 1000)).
 visito(katara, tribuAgua(norte)).
 visito(katara, tribuAgua(sur)).
@@ -41,6 +54,8 @@ visito(aang, temploAire(norte)).
 visito(aang, temploAire(oeste)).
 visito(aang, temploAire(este)).
 visito(aang, temploAire(sur)).
+visito(bumi, reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo, sectorMedio])).
+visito(suki, nacionDelFuego(prision, 200)).
 
 esElAvatar(Personaje):-
     esPersonaje(Personaje),
@@ -50,8 +65,11 @@ noEsMaestro(Personaje):-
     esPersonaje(Personaje),
     not(controla(Personaje,_)).
 
+/*esMaestroPrincipiante(Personaje):-
+    controla(Personaje,_),
+    forall(controla(Personaje,Elemento),esElementoBasico(Elemento)).*/
+
 esMaestroPrincipiante(Personaje):-
-    esPersonaje(Personaje),
     controla(Personaje,Elemento),
     not(elementoAvanzadoDe(_,Elemento)).
 
@@ -59,16 +77,15 @@ esMaestroAvanzado(Personaje):-
     esElAvatar(Personaje).
 
 esMaestroAvanzado(Personaje):-
-    esPersonaje(Personaje),
     controla(Personaje,Elemento),
     elementoAvanzadoDe(_,Elemento).
 
-sigueA(zuko,aang).
-sigueA(Seguidor,Seguido):-
-    visito(Seguido,_),
-    visito(Seguidor,_),
-    Seguido \= Seguidor,
-    forall(visito(Seguido,Lugar),visito(Seguidor,Lugar)).
+sigueA(aang,zuko).
+sigueA(Personaje,OtroPersonaje):-
+    visito(Personaje, _),
+    visito(OtroPersonaje, _),
+    Personaje\=OtroPersonaje,
+    forall(visito(Personaje,Lugar),visito(OtroPersonaje,Lugar)).
 
 esDignoDeConocer(Lugar):-
     visito(_,Lugar),
@@ -76,30 +93,12 @@ esDignoDeConocer(Lugar):-
 
 esDigno(temploAire(_)).
 esDigno(tribuAgua(norte)).
-esLugarDigno(reinoTierra(_,Estructura)):-
-    not(member(muro,Estructura)).
-
-lugar(reinoTierra(baSingSe, [muro, zonaAgraria, sectorBajo,sectorMedio])).
-lugar(reinoTierra(fortalezaDeGralFong, [cuartel, dormitorios, enfermeria, salaDeGuerra, templo, zonaDeRecreo])).
-lugar(nacionDelFuego(palacioReal, 1000)).
-lugar(tribuAgua(norte)).
-lugar(tribuAgua(sur)).
-lugar(tribuAgua(este)).
-lugar(tribuAgua(oeste)).
-lugar(temploAire(norte)).
-lugar(temploAire(sur)).
-lugar(temploAire(este)).
-lugar(temploAire(oeste)).
-
-
-esPopular(Lugar):-
-    personasQueVisitaron(Lugar,Personajes),
-    length(Personajes, Tamanio),
-    Tamanio > 4.
+esDigno(reinoTierra(_,Estructura)):-
+    not(member(muro, Estructura)).
     
-        
-personasQueVisitaron(Lugar,Personajes):-
-    lugar(Lugar),
-    findall(Personaje,visito(Personaje,Lugar),Personajes).
+esPopular(Lugar):-
+    visito(_,Lugar),
+    findall(Personaje,visito(Personaje,Lugar),Visitas),
+    length(Visitas,CantidadDeVisitas),
+    CantidadDeVisitas>4.
 
-esPersonaje(bumi).

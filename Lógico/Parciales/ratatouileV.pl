@@ -34,7 +34,12 @@ cocinaBien(remy,_).
 encargadoDe(Plato,Restoran,Persona):-
     trabajaEn(Restoran, Persona),
     cocina(Persona,Plato,Experiencia),
-    forall((cocina(Chef,Plato,Nivel),trabajaEn(Chef,Restoran)),Nivel<Experiencia).
+    forall(cocineroDePlatoEnRestoran(Plato,Restoran,Nivel),Nivel<Experiencia).
+
+cocineroDePlatoEnRestoran(Plato,Restoran,Nivel):-
+    cocina(Chef,Plato,Nivel),
+    trabajaEn(Chef,Restoran).
+
 
 plato(ensaladaRusa, entrada([papa, zanahoria, arvejas, huevo, mayonesa])).
 plato(bifeDeChorizo, principal(pure, 25)).

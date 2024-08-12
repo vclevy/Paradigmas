@@ -1,3 +1,4 @@
+
 personaje(pumkin,     ladron([licorerias, estacionesDeServicio])).
 personaje(honeyBunny, ladron([licorerias, estacionesDeServicio])).
 personaje(vincent,    mafioso(maton)).
@@ -15,36 +16,36 @@ trabajaPara(marsellus, vincent).
 trabajaPara(marsellus, jules).
 trabajaPara(marsellus, winston).
 
+esPeligroso(Personaje):-
+    personaje(Personaje,Actividad),
+    actividadPeligrosa(Actividad).
+
+esPeligroso(Personaje):-
+    personaje(Personaje,_),
+    tieneEmpleadosPeligrosos(Personaje).
+
+actividadPeligrosa(mafioso(maton)).
+actividadPeligrosa(ladron(Lugares)):-
+    member(licorerias,Lugares).
+
+tieneEmpleadosPeligrosos(Personaje):-
+    trabajaPara(Personaje,Empleado),
+    esPeligroso(Empleado).
+
 amigo(vincent, jules).
 amigo(jules, jimmie).
 amigo(vincent, elVendedor).
 
-esPeligroso(Personaje):-
-    personaje(Personaje, Actividad),
-    realizaActividadPeligrosa(Actividad).
-
-esPeligroso(Personaje):-
-    tieneEmpleadosPeligrosos(Personaje).
-
-realizaActividadPeligrosa(ladron(Lugares)):-
-    member(licorerias, Lugares).
-    
-realizaActividadPeligrosa(mafioso(maton)).
-
-tieneEmpleadosPeligrosos(Personaje):-
-    trabajaPara(Personaje, Empleado),
-    personaje(Empleado, ActividadEmpleado),
-    realizaActividadPeligrosa(ActividadEmpleado).
-
-duoTemible(Personaje,OtroPersonaje):-
-    esPeligroso(Personaje),
+duoTemible(UnPersonaje,OtroPersonaje):-
+    esPeligroso(UnPersonaje),
     esPeligroso(OtroPersonaje),
-    pareja(Personaje,OtroPersonaje). % se pdoría hacer un predicado q sea sonParejaOAmigos.
+    relativos(UnPersonaje,OtroPersonaje).
 
-duoTemible(Personaje,OtroPersonaje):-
-    esPeligroso(Personaje),
-    esPeligroso(OtroPersonaje),
-    amigo(Personaje,OtroPersonaje).
+relativos(UnPersonaje,OtroPersonaje):-
+    amigo(UnPersonaje,OtroPersonaje).
+
+relativos(UnPersonaje,OtroPersonaje):-
+    pareja(UnPersonaje,OtroPersonaje).
 
 %encargo(Solicitante, Encargado, Tarea). 
 %las tareas pueden ser cuidar(Protegido), ayudar(Ayudado), buscar(Buscado, Lugar)
@@ -53,75 +54,85 @@ encargo(vincent,  elVendedor, cuidar(mia)).
 encargo(marsellus, winston, ayudar(jules)).
 encargo(marsellus, winston, ayudar(vincent)).
 encargo(marsellus, vincent, buscar(butch, losAngeles)).
+encargo(marsellus, vincent, buscar(butch, losAngeles)).
 
 estaEnProblemas(butch).
+estaEnProblemas(Personaje):-
+    personaje(Personaje,_),
+    trabajaPara(Empleador,Personaje),
+    esPeligroso(Empleador),
+    debeCuidarParejaDe(Empleador,Personaje).
 
 estaEnProblemas(Personaje):-
-    encargo(Jefe,Personaje,Tarea),
-    esPeligroso(Jefe),
-    encargoPeligroso(Jefe,Tarea).
+    encargo(_, Personaje, buscar(OtroPersonaje,_)),
+    esBoxeador(OtroPersonaje).
 
-estaEnProblemas(Personaje):-
-    encargo(_,Personaje,buscar(Buscado,_)),
-    personaje(Buscado,boxeador).
+esBoxeador(OtroPersonaje):-
+    personaje(OtroPersonaje,boxeador).
 
-encargoPeligroso(Jefe,cuidar(Personaje)):-
-    pareja(Jefe,Personaje).
+debeCuidarParejaDe(Empleador,Personaje):-
+    encargo(Empleador,Personaje,cuidar(Pareja)),
+    pareja(Empleador,Pareja).
 
 sanCayetano(Personaje):-
-    forall(tieneCerca(Personaje,Cercano),encargo(Personaje,Cercano,_)).
+    personaje(Personaje,_),
+    encargo(Personaje,_,_), % si tiene al menos un encargo
+    forall(personaCercana(Personaje,Cercano),encargo(Personaje,Cercano,_)).
 
-tieneCerca(Personaje,Cercano):-
+personaCercana(Personaje,Cercano):-
     amigo(Personaje,Cercano).
 
-tieneCerca(Personaje,Cercano):-
+personaCercana(Personaje,Cercano):-
     trabajaPara(Personaje,Cercano).
 
 masAtareado(Personaje):-
     personaje(Personaje,_),
-    cantidadDeEncargos(Personaje,Cantidad),
-    forall((cantidadDeEncargos(OtroPersonaje,CantidadMenor), Personaje \= OtroPersonaje), Cantidad > CantidadMenor).
+    encargosDe(Personaje,CantidadDeEncargos),
+    forall((encargosDe(OtroPersonaje,Cantidad),OtroPersonaje\=Personaje),Cantidad<CantidadDeEncargos).
 
-cantidadDeEncargos(Personaje,Cantidad):-
+encargosDe(Personaje,Cantidad):-
     personaje(Personaje,_),
     findall(Encargo,encargo(_,Personaje,Encargo),Encargos),
-    length(Encargos, Cantidad).
+    length(Encargos,Cantidad).
 
-nivelDeRespeto(actriz(Peliculas),Nivel):-
+personajesRespetables(Personajes):-
+    findall(Personaje,esRespetable(Personaje),Personajes).
+
+esRespetable(Personaje):-
+    personaje(Personaje,Actividad),
+    nivelDeRespeto(Actividad,Respeto),
+    Respeto>9.
+
+nivelDeRespeto(actriz(Peliculas),Respeto):-
     length(Peliculas,CantidadDePeliculas),
-    Nivel is CantidadDePeliculas/10.
+    Respeto is CantidadDePeliculas/10.
 
 nivelDeRespeto(mafioso(resuelveProblemas),10).
 nivelDeRespeto(mafioso(maton),1).
 nivelDeRespeto(mafioso(capo),20).
 
-esPersonajeRespetable(Personaje):-
-    personaje(Personaje,Actividad),
-    nivelDeRespeto(Actividad,Nivel),
-    Nivel>9.
+hartoDe(UnPersonaje,OtroPersonaje):-
+    personaje(UnPersonaje,_),
+    personaje(OtroPersonaje,_),
+    forall(encargo(_,UnPersonaje,Encargo),requiereInteractuarConPersonajeOAmigo(Encargo,OtroPersonaje)).
 
-personajesRespetables(PersonajesRespetables):-
-    findall(Personaje,esPersonajeRespetable(Personaje),PersonajesRespetables).
+requiereInteractuarConPersonajeOAmigo(cuidar(Personaje),Personaje).
+requiereInteractuarConPersonajeOAmigo(cuidar(OtroPersonaje),Personaje):-
+    amigo(OtroPersonaje,Personaje).
 
-hartoDe(Personaje1,Personaje2):- %personje 2 harto del 1
-    personaje(Personaje1,_),
-    personaje(Personaje2,_),
-    forall(encargo(_,Personaje1,Tarea),requiereInteractuarCon(Personaje2,Tarea)).
+requiereInteractuarConPersonajeOAmigo(buscar(Personaje,_),Personaje).
+requiereInteractuarConPersonajeOAmigo(buscar(OtroPersonaje,_),Personaje):-
+    amigo(OtroPersonaje,Personaje).
 
-requiereInteractuarCon(Personaje,cuidar(Personaje)).
-requiereInteractuarCon(Personaje,buscar(Personaje,_)).
-requiereInteractuarCon(Personaje,ayudar(Personaje)).
+requiereInteractuarConPersonajeOAmigo(ayudar(Personaje),Personaje).
+requiereInteractuarConPersonajeOAmigo(ayudar(OtroPersonaje),Personaje):-
+    amigo(OtroPersonaje,Personaje).
 
-    
+caracteristicas(vincent,  [negro, muchoPelo, tieneCabeza]).
+caracteristicas(jules,    [tieneCabeza, muchoPelo]).
+caracteristicas(marvin,   [negro]).
 
-
-
-
-
-
-
-
-
-
-
-
+duoDiferenciable(UnPersonaje,OtroPersonaje):-
+    personaje(UnPersonaje,_),
+    personaje(OtroPersonaje,_),
+    relativos(UnPersonaje,OtroPersonaje).
