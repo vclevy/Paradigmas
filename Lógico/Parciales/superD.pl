@@ -63,37 +63,40 @@ totalAPagar(Persona,Total):-
     findall(Precio,precioCompraProducto(Persona,_,Precio),ListaPrecios),
     sumlist(ListaPrecios, Total).
     
-productoYMarca(lacteo,Marca):-
-    precioUnitario(lacteo(Marca,_),_).
-productoYMarca(arroz,Marca):-
-    precioUnitario(arroz(Marca),_).
-productoYMarca(salchichas,Marca):-
-    precioUnitario(salchichas(Marca,_),_).
+% productoYMarca(lacteo,Marca):-
+%     precioUnitario(lacteo(Marca,_),_).
+% productoYMarca(arroz,Marca):-
+%     precioUnitario(arroz(Marca),_).
+% productoYMarca(salchichas,Marca):-
+%     precioUnitario(salchichas(Marca,_),_).
 
-seRelacionan(Marca1,Marca2):-
-    dueno(Marca1,Marca2).
-seRelacionan(Marca1,Marca2):-
-    dueno(Marca2,Marca1).
-
-noEsMarcaUnica(Marca):-
-    productoYMarca(Producto,Marca),
-    productoYMarca(Producto,OtraMarca),
-    not(seRelacionan(Marca,OtraMarca)),
-    OtraMarca\=Marca.
+% noEsMarcaUnica(Marca):-
+%     productoYMarca(Producto,Marca),
+%     productoYMarca(Producto,OtraMarca),
+%     not(seRelacionan(Marca,OtraMarca)),
+%     OtraMarca\=Marca.
 
 clienteFiel(Persona,Marca):- %No se xq no anda
     noEsMarcaUnica(Marca), compro(Persona,_,_),
     forall(compro(Persona,Producto,_),productoYMarca(Producto,Marca)).
 
-esDuenoDe(Empresa,OtraEmpresa)
+esDuenoDe(Empresa,OtraEmpresa):-
+    dueno(Empresa,OtraEmpresa).
+esDuenoDe(Empresa,OtraEmpresa):-
+    dueno(Empresa,Intermediario),
+    esDuenoDe(Intermediario,OtraEmpresa).
 
+empresaDelProducto(lacteo(Empresa,_),Empresa).
+empresaDelProducto(arroz(Empresa),Empresa).
+empresaDelProducto(salchichas(Empresa,_),Empresa).
 
 productoDeLaEmpresa(Producto,Empresa):-
-    productoYMarca(Producto,Empresa).
+    precioUnitario(Producto,_),
+    empresaDelProducto(Producto,Empresa).
 productoDeLaEmpresa(Producto,Empresa):-
-    productoYMarca(Producto,OtraEmpresa),
+    precioUnitario(Producto,_),
+    empresaDelProducto(Producto,OtraEmpresa),
     esDuenoDe(Empresa,OtraEmpresa).
 
 provee(Empresa,Productos):-
-    productoYMarca(_,Empresa),
-    findall(Producto,productoDeLaEmpresa(Empresa,Producto),Productos).
+    findall(Producto,productoDeLaEmpresa(Producto,Empresa),Productos).
