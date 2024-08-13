@@ -1,4 +1,4 @@
-% Parte 2
+% Parte 1
 %magos(Nombre,Sangre,Caracteristicas,CasaQueOdia).
 
 mago(harry, mestiza, [coraje, amistoso, orgullo, inteligencia]).
@@ -114,5 +114,3 @@ puntajeTotal(Casa,Total):-
 casaGanadora(Casa):-
     puntajeTotal(Casa,TotalCasa),
     forall((esDe(_,Casas),puntajeTotal(Casas,TotalOtrasCasas),Casa\=Casas),TotalOtrasCasas<TotalCasa).
-
-    
