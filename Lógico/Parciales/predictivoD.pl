@@ -56,7 +56,42 @@ noTieneAbreviaturas([Palabra|Resto]):-
     not(abreviatura(Palabra,_)),
     noTieneAbreviaturas(Resto).
     
-%Punto 3 me da paja
+%Punto 3 
+
+masDe(N,Palabra,Persona):-
+    findall(Palabra,(mensaje(Mensaje,Persona),member(Palabra,Mensaje)),EnviadosAPersona),
+    findall(Palabra,(mensaje(Mensaje,_),member(Palabra,Mensaje)),Enviados),
+    length(EnviadosAPersona,CantidadEnviadosAPersona),
+    length(Enviados,CantidadEnviados),
+    N is CantidadEnviadosAPersona/CantidadEnviados.
+
+ignorar(ListaDePalabras,Palabra):-
+    not(member(Palabra,ListaDePalabras)).
+
+soloFormal(Palabra):-
+    mensaje(Mensaje,_),
+    member(Palabra,Mensaje),
+    demasiadoFormal(Mensaje).
+
+esAceptable(Palabra,Persona):-
+    masDe(_,Palabra,Persona),
+    ignorar(_,Palabra), % desconozco de donde sacar la lista de palabras asi que supongo que habra q inventar otra regla
+    soloFormal(Palabra).
 
 %Punto 4 
+palabraSinAbreviaturas(Abreviada,NoAbreviada):-
+    abreviatura(Abreviada,NoAbreviada).
+palabraSinAbreviaturas(NoAbreviada,NoAbreviada):-
+    abreviatura(_,NoAbreviada).
+palabraSinAbreviaturas(Signo,Signo):-
+    signo(Signo).
 
+mensajeNoAbreviado([], []). % Parcial choto
+mensajeNoAbreviado([Palabra|RestoMensaje], [PalabraNoAbreviada|RestoNoAbreviado]) :-
+    palabraSinAbreviaturas(Palabra, PalabraNoAbreviada),
+    mensajeNoAbreviado(RestoMensaje, RestoNoAbreviado).
+
+dicenLoMismo(Mensaje1,Mensaje2):-
+    mensajeNoAbreviado(Mensaje1,NoAbreviado1),
+    mensajeNoAbreviado(Mensaje2,NoAbreviado2),
+    NoAbreviado1=NoAbreviado2.
