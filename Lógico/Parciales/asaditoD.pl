@@ -46,9 +46,12 @@ asadoViolento(Fecha):-
 
 % Punto 3 
 
-calorias(achura(_,Cals),Cals).
-calorias(morfi(_),200).
-calorias(ensalada(_,Ingredientes),Cals):-
+calorias(Nombre,Cals):-
+    comida(achura(Nombre,Cals)).
+calorias(Nombre,200):-
+    comida(morfi(Nombre)).
+calorias(Nombre,Cals):-
+    comida(ensalada(Nombre,Ingredientes)),
     length(Ingredientes,Cals).
 
 % Punto 4
@@ -57,6 +60,12 @@ asadoFlojito(Fecha):-
     asistio(Fecha,_),
     caloriasDelAsado(Fecha,TotalCals), TotalCals<400.
 
-caloriasDelAsado(Fecha,Calorias):-
+caloriasDelAsado(Fecha,CaloriasTotales):-
     findall(Calorias,(asado(Fecha,Comida),calorias(Comida,Calorias)),CaloriasPorComida),
-    sumlist(CaloriasPorComida,Calorias).
+    sumlist(CaloriasPorComida,CaloriasTotales).
+
+%Punto 5
+
+hablo(fecha(15,09,2011), flor, pablo). hablo(fecha(22,09,2011), flor, marina).
+hablo(fecha(15,09,2011), pablo, leo). hablo(fecha(22,09,2011), marina, pablo).
+hablo(fecha(15,09,2011), leo, fer). reservado(marina).
