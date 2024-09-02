@@ -69,3 +69,5 @@ caloriasDelAsado(Fecha,CaloriasTotales):-
 hablo(fecha(15,09,2011), flor, pablo). hablo(fecha(22,09,2011), flor, marina).
 hablo(fecha(15,09,2011), pablo, leo). hablo(fecha(22,09,2011), marina, pablo).
 hablo(fecha(15,09,2011), leo, fer). reservado(marina).
+
+
