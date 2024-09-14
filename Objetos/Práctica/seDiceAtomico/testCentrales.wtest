@@ -1,0 +1,44 @@
+import centrales.*
+
+describe "burns"{
+
+	test "burns con 10 varillas produce 1 Mkwh en springfield "{
+        burns.varillaDeUranio(10)
+		assert.equals(1,springfield.produccionEnergeticaDe(burns))
+	}
+} 
+
+describe "exBosque" {
+  test "exBosque con una capacidad de 20 toneladas produce 18.5 Mkwh en springfield" {
+    exBosque.capacidadEnToneladas(20)
+    assert.equals(18.5, springfield.produccionEnergeticaDe(exBosque))
+  }
+}
+
+describe "elSuspiro" {
+  test "elSuspiro produce 2 Mkwh en springfield" {
+    assert.equals(2, springfield.produccionEnergeticaDe(elSuspiro))
+  }
+}
+
+describe "springfield" {
+  test "Teniendo las centrales anteriores, las centrales contaminantes de Springfield es una colección que adentro tiene sólo a exBosque." {
+    burns.varillaDeUranio(10)
+    exBosque.capacidadEnToneladas(20)
+    assert.equals([exBosque], springfield.centralesContaminantes())
+  }
+
+  test "Teniendo las centrales anteriores, springfield cubrió su necesidad energética si ésta era de 20 Mkwh." {
+    burns.varillaDeUranio(10)
+    exBosque.capacidadEnToneladas(20)
+    springfield.necesidadEnergetica(20)
+    assert.that(springfield.cubreSusNecesidades())
+  }
+  test "Teniendo las centrales anteriores, springfield está al horno si posee una necesidad energética de 30 Mkwh." {
+    burns.varillaDeUranio(10)
+    exBosque.capacidadEnToneladas(20)
+    springfield.necesidadEnergetica(30)
+    assert.that(springfield.estaEnElHorno())
+  }
+}
+
