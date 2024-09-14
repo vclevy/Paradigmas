@@ -96,6 +96,23 @@ nivelFalopez(omeprazol, 5).
 
 %alteracionQueGenera(Jugador, AlteracionProducto):-
 %    tomo(Jugador)
+
+cuantaFalopaTiene(Jugador,Cantidad):-
+    tomo(Jugador,_),
+    findall(Falopa,falopa(Jugador,Falopa),CantidadDeFalopa),
+    sum_list(CantidadDeFalopa,Cantidad).
+
+falopa(Jugador,Falopa):-
+    tomo(Jugador,Bebida), 
+    falopaEnBebida(Bebida,Falopa).
+
+falopaEnBebida(producto(_, _),0).
+falopaEnBebida(sustancia(Sustancia),Cantidad):-
+    nivelFalopez(Sustancia,Cantidad).
+falopaEnBebida(compuesto(Compuesto),Cantidad):-
+    composicion(Compuesto,Componentes),
+    findall(Falopez,(member(Componente,Componentes), nivelFalopez(Componente,Falopez)),CantidadDeFalopez),
+    sum_list(CantidadDeFalopez, Cantidad).
     
 % Punto 6
 medicoConProblemas(Medico):-
