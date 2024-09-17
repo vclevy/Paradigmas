@@ -1,3 +1,7 @@
+object region{
+    const ciudades = #{springfield,albuquerque}
+    method centralesMasProductoras() = ciudades.map({ciudad=>ciudad.centralMasProductora()})
+}
 object springfield {
     const velocidadDeVientos = 10
     const riquezaDelSuelo = 0.9
@@ -5,15 +9,18 @@ object springfield {
     var necesidadEnergetica = 100 // ??
     method velocidadDeVientos() = velocidadDeVientos 
     method riquezaDelSuelo() = riquezaDelSuelo 
-    method necesidadEnergetica(unaCantdiad) {necesidadEnergetica = unaCantdiad} 
+    method necesidadEnergetica(unaCantidad) {necesidadEnergetica = unaCantidad} 
     method produccionEnergeticaDe(unaCentral)= unaCentral.produccionEnergetica()
     method centralesContaminantes() = centrales.filter({unaCentral => unaCentral.esContaminante()})
     method cubreSusNecesidades() = self.produccionDe(centrales) > necesidadEnergetica
     method estaEnElHorno() = centrales.all({unaCentral => unaCentral.esContaminante()}) || self.produccionDe(self.centralesContaminantes()) > necesidadEnergetica/2
     method produccionDe(unasCentrales) = unasCentrales.map({unaCentral=>self.produccionEnergeticaDe(unaCentral)}).sum()
+    method centralMasProductora() = centrales.max({central=> central.produccionEnergetica()})
 }
 object albuquerque {
   const centrales = [hidroelectrica]
+  const caudalRio = 150
+  method centralMasProductora() = centrales.first()
 }
 object burns {
     var varillaDeUranio = 100
