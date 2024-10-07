@@ -1,0 +1,84 @@
+@startuml Gameflix
+
+abstract class Juego{
+    nombre
+    precio
+    categoria
+    --
+    perteneceACategoria(unaCategoria)
+    seLlama(unNombre)
+    {abstract} afectarA(unCliente, unasHoras)
+    saleMenosQue(unaCantidad)
+}
+
+class JuegoViolento{
+    afectarA(unCliente, unasHoras)
+}
+
+class Moba{
+    afectarA(unCliente, unasHoras)
+}
+
+class JuegoDeTerror{
+    afectarA(unCliente, unasHoras)
+}
+
+class JuegoEstrategico{
+    afectarA(unCliente, unasHoras)
+}
+
+class Cliente{
+    humor
+    plata
+    suscripcion
+    bajarHumor(unaCantidad)
+    pagar(unaCantidad)
+    aumentarHumor(unaCantidad)
+    pagarSuscripcion()
+    suscripcion(unaSuscripcion)
+}
+
+object gameflix{
+    juegos
+    clientes
+    --
+    juegosDeCategoria(unaCategoria)
+    juegoQueSeLlama(unNombre)
+    juegoRecomendado()
+    cobrarSuscripciones()
+}
+
+class SuscripcionPorCategoria{
+    categoria
+    precio
+    precio()
+    puedeJugar(unJuego)
+}
+
+object base{
+    precio()
+    puedeJugar(unJuego)
+}
+
+object premium{
+    precio()
+    puedeJugar(unJuego)
+}
+
+interface Suscripcion{
+    precio()
+    puedeJugar(unJuego)
+}
+
+
+JuegoViolento --|> Juego 
+Moba --|> Juego
+JuegoDeTerror --|> Juego
+JuegoEstrategico --|> Juego
+gameflix --> "*" Juego : juegos
+gameflix --> "*" Cliente : clientes
+Cliente --> Suscripcion
+premium ..|> Suscripcion
+base ..|> Suscripcion
+SuscripcionPorCategoria ..|> Suscripcion
+@enduml
