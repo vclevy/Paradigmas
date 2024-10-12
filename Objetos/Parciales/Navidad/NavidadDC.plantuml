@@ -1,0 +1,82 @@
+@startuml 
+
+class ArbolNavidenio{
+    var regalos
+    var tarjetas
+    var adornos
+
+    {abstract} method capacidadParaContenerRegalos()
+    method agregarRegalo(unRegalo)
+    method hayEspacio()
+    method beneficiarios() 
+    method costoDeRegalos() 
+    method importancia() 
+    method esPotentoso() 
+    method hayMuchosRegalosLindos() 
+    method hayUnaGranTarjeta() 
+    method adornoMasPesado() 
+}
+
+class ArbolNatural extends ArbolNavidenio{
+    const vejez
+    const tamanioTronco
+
+    method capacidadParaContenerRegalos() 
+}
+
+class ArbolArtificial extends ArbolNavidenio{
+    const cantidadDeVaras
+
+    method capacidadParaContenerRegalos()
+}
+
+class Regalo{
+    const precio
+    const destinatario
+    const umbralDePrecioPromedio
+
+    method destinatario() 
+    method precio() 
+    method esUnRegaloTeQuierenMucho() 
+}
+
+class Tarjeta{
+    const precio 
+    const destinatario
+    const valorAdjunto
+
+    method destinatario() 
+    method esCara()
+}
+
+class Adorno{
+    const peso
+    const coeficienteDeSuperioridad
+    const importancia
+
+    method peso() 
+    method importancia() 
+    method pesoBase() 
+}
+
+class Luz extends Adorno{
+    const lamparitas
+
+    method importancia() 
+}
+
+class FiguraElaborada extends Adorno{
+    const volumen
+
+    method importancia()
+}
+
+class Guirnalda extends Adorno{
+    const anioQueFueComprada
+
+    method pesoBase()
+}
+
+ArbolNavidenio--> "*" Regalo : regalos
+ArbolNavidenio--> "*" Tarjeta : tarjetas
+ArbolNavidenio--> "*" Adorno : adornos
