@@ -55,6 +55,5 @@ class Jugador{
     casilleroActual(unosCasilleros.last())
     }
 
-
 }
 
