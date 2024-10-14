@@ -1,0 +1,117 @@
+@startuml
+
+class Persona{
+    var sueniosPendientes 
+    var sueniosCumplidos 
+    var carrerasQueQuiereEstudiar
+    var carrerasHechas
+    var felicidad
+    const plataDeseada
+    var trabajo
+    var hijos
+    var lugaresViajados
+    var property tipoPersona
+
+    {abstract} method cumplir(unSuenio)
+
+    method quiereEstudiar(unaCarrera)
+
+    method seRecibioDe(unaCarrera)
+
+    method recibirseDe(unaCarrera) 
+
+    method aumentarFelicidad(unaCantidad)
+
+    method plataDeseada() 
+
+    method trabajo(nuevoTrabajo)
+
+    method tieneUnHijo() 
+
+    method tenerA(unHijo) 
+
+    method viajarA(unLugar) 
+
+    {abstract} method cumplirSuenioMultiple(unosSuenios)
+
+    method esFeliz()
+
+    method cantidadDeSueniosFelices() 
+
+    method esAmbiciosa()
+
+    method cumplirSuenioElegido() 
+	
+}
+object realista {
+	method elegirSuenio(sueniosPendientes)
+}
+
+object alocado { 
+	method elegirSuenio(sueniosPendientes)
+}
+
+object obsesivo {
+	method elegirSuenio(sueniosPendientes) 
+}
+
+class Suenio{
+    const felicidonios
+
+    method puedeSerCumplidoPor(unaPersona)
+
+    method serCumplidoPor(unaPersona)
+
+    method felicidonios()
+
+    method esLindo() 
+}
+
+class SuenioMultiple{
+    var property sueniosACumplir 
+}
+
+class RecibirseDe extends Suenio{
+    const carrera
+
+    method puedeSerCumplidoPor(unaPersona)
+
+    method serCumplidoPor(unaPersona)
+}
+
+class ConseguirTrabajoDe extends Suenio{
+    const plata
+    const trabajo
+
+    method puedeSerCumplidoPor(unaPersona) 
+    
+    method serCumplidoPor(unaPersona)
+}
+
+class TenerHijo extends Suenio{
+    const nombre
+
+    method puedeSerCumplidoPor(unaPersona)
+
+    method serCumplidoPor(unaPersona)
+}
+
+class ViajarA extends Suenio{
+    const lugar
+
+    method puedeSerCumplidoPor(unaPersona)
+
+    method serCumplidoPor(unaPersona)
+}
+
+interface TipoDePersona{
+    method elegirSuenio
+}
+Persona-->Suenio
+SuenioMultiple --> "*" Suenio : suenios
+obsesivo..|>TipoDePersona
+realista..|>TipoDePersona
+alocado..|>TipoDePersona
+Persona --> TipoDePersona
+
+@enduml
