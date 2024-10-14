@@ -5,36 +5,30 @@ class Producto{
     const precioBase
 
     method precio()
-
     method nombreEnOferta()
 }
 
 class Mueble extends Producto{
     method precio()
+}
 
 class Indumentaria extends Producto{
-    var esDeTemporadaActual
+    esDeTemporadaActual
 
     method aumentoSegunTemporada()
-
     method precio()
 }
 
 class Ganga extends Producto{
-
     method precio()
-
     method nombreEnOferta()
 }
 
 class Cupon{
     var fueUsado 
     const porcentajeDescuento
-
     method estaDisponible() 
-
     method descuentoAplicado(unNumero)
-
     method usar()
 }
 
@@ -47,25 +41,15 @@ class Usuario{
     const cupones
 
     method agregarAlCarrito(unProducto)
-
     method comprarCarrito()
-
     method cuponDisponible() 
-
     method precioDelCarrito()
-
     method disminuirDinero(unNumero)
-
     method aumentarPuntos(unNumero)
-
     method reducirPuntos(unNumero)
-    
     method esMoroso()
-
     method eliminarCuponesUsados()
-
     method actualizarNivel()
-    
     method nivelCorrespondiente()
 }
 
@@ -76,17 +60,8 @@ class NivelLimitado{
     method permiteAgregarACarrito(unCarrito)
 }
 
-object bronce{
-
-}
-
-object plata{
-    
-}
-
 object oro{
    method permiteAgregarACarrito(unCarrito)
-
    method puedeAcceder(unaPersona)
 }
 
@@ -95,13 +70,9 @@ object pdepLibre{
     const usuarios 
 
     method penalizarMorosos()
-
     method usuariosMorosos()
-
     method eliminarCuponesUsados()
-
     method nombresDeProductosEnOferta()
-
     method actualizarNivelDeUsuario()
 }
 
@@ -116,7 +87,5 @@ Usuario --> Nivel
 Usuario --> "*" Cupon : cupones
 oro ..|> Nivel
 NivelLimitado ..|> Nivel
-bronce ..|> NivelLimitado
-plata ..|> NivelLimitado
 
 @enduml
