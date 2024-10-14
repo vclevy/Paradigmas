@@ -1,0 +1,122 @@
+@startuml
+
+class Producto{
+    const nombre
+    const precioBase
+
+    method precio()
+
+    method nombreEnOferta()
+}
+
+class Mueble extends Producto{
+    method precio()
+
+class Indumentaria extends Producto{
+    var esDeTemporadaActual
+
+    method aumentoSegunTemporada()
+
+    method precio()
+}
+
+class Ganga extends Producto{
+
+    method precio()
+
+    method nombreEnOferta()
+}
+
+class Cupon{
+    var fueUsado 
+    const porcentajeDescuento
+
+    method estaDisponible() 
+
+    method descuentoAplicado(unNumero)
+
+    method usar()
+}
+
+class Usuario{
+    const nombre
+    var dinero
+    var puntos
+    var nivel
+    const carrito
+    const cupones
+
+    method agregarAlCarrito(unProducto)
+
+    method comprarCarrito()
+
+    method cuponDisponible() 
+
+    method precioDelCarrito()
+
+    method disminuirDinero(unNumero)
+
+    method aumentarPuntos(unNumero)
+
+    method reducirPuntos(unNumero)
+    
+    method esMoroso()
+
+    method eliminarCuponesUsados()
+
+    method actualizarNivel()
+    
+    method nivelCorrespondiente()
+}
+
+
+class NivelLimitado{
+    const limite
+
+    method permiteAgregarACarrito(unCarrito)
+}
+
+object bronce{
+
+}
+
+object plata{
+    
+}
+
+object oro{
+   method permiteAgregarACarrito(unCarrito)
+
+   method puedeAcceder(unaPersona)
+}
+
+object pdepLibre{
+    const productos 
+    const usuarios 
+
+    method penalizarMorosos()
+
+    method usuariosMorosos()
+
+    method eliminarCuponesUsados()
+
+    method nombresDeProductosEnOferta()
+
+    method actualizarNivelDeUsuario()
+}
+
+interface Nivel{
+
+}
+
+pdepLibre --> "*" Usuario : usuarios 
+pdepLibre --> "*" Producto : productos
+Usuario --> "*" Producto : carrito
+Usuario --> Nivel
+Usuario --> "*" Cupon : cupones
+oro ..|> Nivel
+NivelLimitado ..|> Nivel
+bronce ..|> NivelLimitado
+plata ..|> NivelLimitado
+
+@enduml
