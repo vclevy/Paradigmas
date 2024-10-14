@@ -32,8 +32,8 @@ class Oficinista inherits Empleado{
     var property saludCritica = 40-5*estrellas
 
     method ascender(){
-        const oficinista = new Oficinista (salud = self.salud(),habilidades = self.habilidades(), jefe = self.jefe(), estrellas = self.estrellas())
-        return oficinista
+        //const oficinista = new Oficinista (salud = self.salud(),habilidades = self.habilidades(), jefe = self.jefe(), estrellas = self.estrellas())
+       // return oficinista
 }
     method pasarMision(){
         estrellas += 1
@@ -53,6 +53,6 @@ class Equipo {
 }
 
 class Mision {
-    const dificultad
-    const habilidadesMision
+//     const dificultad
+//     const habilidadesMision
 }
