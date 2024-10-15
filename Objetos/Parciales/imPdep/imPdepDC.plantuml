@@ -1,0 +1,88 @@
+@startuml
+
+class Pelicula{
+    nombre
+    elenco
+
+    method sueldoDeElenco() 
+    method presupuesto()
+    method ganancias() 
+    method cuantoRecaudo() 
+    method cantidadDeIntegrantes()
+    method esEconomica()
+    method nombre()
+    method rodar()
+}
+
+class PeliculaDeDrama extends Pelicula{
+
+    method cuantoRecaudo()
+}
+class PeliculaDeAccion extends Pelicula{
+    vidriosRotos
+
+    method presupuesto()
+    method cuantoRecaudo()
+}
+
+
+class PeliculaDeTerror extends Pelicula{
+    cuchos
+
+    method cuantoRecaudo() 
+}
+
+class PeliculaDeComedia extends Pelicula{
+}
+
+class Artista{
+    experiencia
+    cantidadDePeliculas
+    ahorros
+
+    method sueldo()
+    method nivelDeFama()
+    method cantidadDePeliculas()
+    method recategorizar()
+    method es(unaCategoria)
+    method categoriaCorrespondiente()
+    method actuar()
+    method aumentarAhorros(unNumero)
+}
+
+interface experiencia{
+    method sueldoDe()
+}
+
+object amateur{
+    method sueldoDe(unaPersona)
+}
+
+object establecida{
+    method sueldoDe(unaPersona)
+}
+
+object estrella{
+    method sueldoDe(unaPersona)
+}
+
+object impPdeP{
+    artistas 
+    peliculas
+
+    method mejorPago()
+    method peliculasEconomicas()
+    method nombreDeLasPeliculasEconomicas()
+    method gananciaDeLasPeliculasEconomicas()
+    method recategorizarAArtistas()
+}
+
+impPdeP-->"*" Artista : artistas
+impPdeP-->"*" Pelicula : peliculas
+Artista --> experiencia
+amateur ..|> experiencia
+establecida ..|> experiencia
+estrella ..|> experiencia
+Pelicula --> "*" Artista : elenco
+
+@enduml
