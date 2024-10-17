@@ -1,0 +1,70 @@
+
+class Persona{
+    posicion
+    elementosCercanos
+    criterioParaPasar
+    criterioParaComer
+    comidasQueIngirio
+
+    method pedirA(unaPersona,unElemento)
+    method tiene(unElemento) 
+    method come(unaComida)
+    method comer(unaComida)
+    method estaPipon()
+    method laEstaPasandoBien()
+    method laPasaBien()
+} 
+
+
+class Criterio{
+
+    {abstract} method elementoQueSePasa(unaPersona,unElemento)
+    method pasarA(laQuePasa,laQuePide,unElemento)
+}
+
+object sorda extends Criterio{
+    method elementoQueSePasa(unaPersona,unElemento) 
+}
+
+object ortiva extends Criterio{
+    method elementoQueSePasa(unaPersona,unElemento) 
+}
+
+object cambioDeLugar{
+    method pasarA(laQuePasa,laQuePide,unElemento)
+}
+
+object normal extends Criterio{
+    method elementoQueSePasa(unaPersona,unElemento)
+}
+
+object vegetariano{
+    method puedeComer(unaComida)
+}
+
+object dietetico{
+    cantidadDeCalorias
+
+    method puedeComer(unaComida)
+}
+
+object alterna{
+    come
+
+    method puedeComer(unaComida)
+}
+
+object combinacion{
+    criterios
+
+}
+
+class Comida{
+    nombre
+    calorias
+    esCarne
+
+    method esPesada() 
+}
+
+// me dio paja hacerlo
