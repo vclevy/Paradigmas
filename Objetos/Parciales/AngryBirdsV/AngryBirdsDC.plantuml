@@ -1,0 +1,99 @@
+@startuml angryBird
+
+class Pajaro{
+    var ira
+
+    method ira(nuevaIra)
+    method enojarse()
+    {abstract} method fuerza()
+    method esFuerte()
+    method tranquilizar()
+    method esHomenajeado() 
+    method puedeDerribar(unObstaculo)
+    method derribar(unObstaculo,unaIsla)
+}
+
+class Comun extends Pajaro{
+    method fuerza()
+}
+
+object bomb{
+    const maximoDeFuerza
+
+    method fuerza() 
+}
+
+object chuck{
+    var velocidad 
+
+    method fuerza()
+    method fuerzaSegunVelocidad()
+    method enojarse()
+    method tranquilizar()
+}
+
+class Rencoroso extends Pajaro{
+    const cantidadDeEnojos
+    const multiplicador
+
+    method fuerza()
+}
+
+object matilda{
+    const huevos 
+
+    method fuerza() 
+    method fuerzaDeHuevos() 
+    method enojarse()
+    method ponerHuevoDeDosKilos()
+}
+
+class Isla{
+    const pajaros 
+    const obstaculos
+
+    method losFuertes()
+    method fuerza()
+    method sesionDeManejoDeIraConMatilda()
+    method invasionDeCerditos(unaCantidad)
+    method losHomenajeados() 
+    method fiestaSorpresa()
+    method atacarA(unaIsla)
+    method seRecuperaronLosHuevos()
+}
+
+class Obstaculo{
+    const resistencia
+
+    method resistencia()
+    
+}
+
+class CerditoArmado extends Obstaculo{
+    const armadura
+
+    method resistencia()
+}
+
+
+class Armadura{
+    const resistenciaArmadura
+
+    method resistenciaArmadura() 
+}
+
+class Huevo{
+    const peso
+
+    method fuerza()
+}
+
+bomb --|> Pajaro
+chuck --|> Pajaro
+matilda --|> Pajaro
+Isla--> Pajaro
+CerditoArmado --> Armadura
+matilda --> "*" Huevo : huevos
+Isla --> "*" Obstaculo : obstaculo
+Pajaro ..> Obstaculo
+@enduml
