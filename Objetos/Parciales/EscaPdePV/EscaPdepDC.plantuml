@@ -1,0 +1,78 @@
+@startuml escapDeP
+
+class Escapista{
+    maestria
+    salasDeLasQueSalio
+    saldo
+    
+    method puedeSalirDe(unaSala)
+    method hizoMuchasSalas() 
+    method subirDeMaestria()
+    method es(unaMaestria) 
+    method salasDeLasQueSalio()
+    method pagar(unaCantidad)
+    method saldo() 
+    method puedePagar(unaSala)
+    method escapa(unaSala)
+}
+
+
+class Grupo{
+    escapistas 
+
+    method puedenEscapar(unaSala) 
+    method montoPorPersonaDe(unaSala) 
+    method pagar(unaSala)
+    method saldoDeGrupo()
+    method puedenPagar(unaSala) 
+    method escaparDe(unaSala)
+}
+
+    
+object amateur{
+    method puedeEscaparDe(unaSala,unEscapista)
+}
+
+object profesional{
+    method puedeEscaparDe(unaSala,unEscapista)
+}
+
+class Sala{
+    nombre
+    dificultad
+
+    method precio() 
+    method esDificil() 
+}
+
+class Anime extends Sala{
+    method precio()
+}
+
+class Historia extends Sala{
+    enQueEstaBasada
+
+    method precio()
+    method esDificil() 
+    }
+
+
+class Terror extends Sala{
+    sustos
+
+    method precio() 
+    method aumentoSegunSustos()
+    method esDificil()
+}
+
+interface Maestria{
+    method puedeEscaparDe(unaSala,unEscapista)
+}
+
+amateur..|>Maestria
+profesional..|>Maestria
+Grupo--> "*" Escapista : escapistas
+Grupo..> Sala
+Escapista..> Sala
+Escapista-->Maestria
+Escapista--> "*" Sala : salasDeLasQueSalio
