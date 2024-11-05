@@ -1,0 +1,1 @@
+class CantidadIncorrectaException inherits Exception(message = "Se intentaron comer mas caramelos de los que tiene el niño") {} 
